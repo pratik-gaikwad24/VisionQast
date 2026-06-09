@@ -2147,14 +2147,26 @@ body.light-mode .google-rating-info p  { color: #64748b; }
 
 /* ── Large Mobile 600px ─────────────────────────────────── */
 @media (max-width: 600px) {
-  /* Process */
-  .process-timeline { grid-template-columns: 1fr 1fr; }
+  /* Process — single column */
+  .process-timeline { grid-template-columns: 1fr; gap: 1rem; }
 
-  /* Why */
-  .why-grid       { grid-template-columns: repeat(2, 1fr); }
+  /* Why — single column */
+  .why-grid       { grid-template-columns: 1fr; gap: 1rem; }
+
+  /* Services — single column */
+  .services-grid  { grid-template-columns: 1fr; gap: 1rem; }
+
+  /* Pricing — single column */
+  .pricing-grid   { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; gap: 1.25rem; }
+  .pricing-card.popular { transform: none; border-color: rgba(99,102,241,0.5); }
+  .pricing-card.popular:hover { transform: translateY(-8px); }
 
   /* About stats */
   .about-stats-row { grid-template-columns: repeat(2, 1fr); }
+
+  /* About badge — prevent overflow */
+  .about-badge-card { position: static; margin: 1.25rem auto 0; width: fit-content; }
+  .about-image-wrap { flex-direction: column; align-items: center; }
 
   /* Testimonials */
   .testimonial-card { padding: 1.5rem; }
@@ -2371,6 +2383,21 @@ body.light-mode .google-rating-info p  { color: #64748b; }
   #navbar         { padding: 0.6rem 0; }
   .hero-scroll-hint { display: none; }
   .section        { padding: 3rem 0; }
+}
+
+/* ── Mobile nav CTA item ─────────────────────────────────── */
+.nav-cta-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .nav-links.open .nav-cta-mobile {
+    display: block;
+    padding: 0.75rem 1rem 0.5rem;
+    border-bottom: none !important;
+  }
+  .nav-cta-mobile .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* ── Light mode overrides for mobile nav ────────────────── */
