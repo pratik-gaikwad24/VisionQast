@@ -54,6 +54,11 @@ html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--accent) transparent;
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+  min-width: 0;
 }
 
 ::-webkit-scrollbar { width: 5px; }
@@ -2105,7 +2110,7 @@ body.light-mode .google-rating-info p  { color: #64748b; }
   .ai-ring.ring-2 { width: 210px; height: 210px; margin: -105px 0 0 -105px; }
   .ai-ring.ring-1 { width: 145px; height: 145px; margin: -72.5px 0 0 -72.5px; }
   .about-stats-row { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-  .about-badge-card { right: -5px; bottom: 0; }
+  .about-badge-card { position: static; margin: 1.25rem auto 0; width: fit-content; }
 
   /* Services */
   .services-grid  { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
@@ -2907,6 +2912,93 @@ img[loading="lazy"].loaded { opacity: 1; }
   .tech-track, .scroll-wheel, .badge-dot { animation: none !important; }
 
   [data-aos] { opacity: 1 !important; transform: none !important; }
+}
+
+/* =========================================================
+   COMPREHENSIVE MOBILE RESPONSIVE FIXES
+   ========================================================= */
+
+/* ── Portfolio overlay: always visible on touch devices ─── */
+@media (hover: none) and (pointer: coarse) {
+  .portfolio-overlay {
+    opacity: 1;
+    background: rgba(5,8,16,0.80);
+  }
+  .portfolio-card:hover .portfolio-placeholder { transform: none; }
+}
+
+/* ── Footer: collapse to 1 column at ≤600px ────────────── */
+@media (max-width: 600px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+  .footer-brand,
+  .footer-newsletter {
+    grid-column: auto !important;
+  }
+  .newsletter-form {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .newsletter-form .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .footer-top { padding: 3rem 0 2rem; }
+}
+
+/* ── Contact: fix form row at ≤600px ────────────────────── */
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+  .contact-form { padding: 1.25rem; }
+}
+
+/* ── Hero: better sizing on mid-mobile (360–480px) ─────── */
+@media (max-width: 480px) {
+  .hero { padding: 4.8rem 0 2.5rem; }
+  .hero-container { gap: 1.5rem; }
+  .hero-visual { max-width: 300px; margin: 0 auto; }
+  .hero-card-container { max-width: 100%; }
+  .main-card { padding: 1rem; }
+  .card-bar-chart { height: 48px; }
+  .metric-icon { width: 32px; height: 32px; font-size: 0.9rem; }
+}
+
+/* ── Navbar: tighten spacing on small screens ───────────── */
+@media (max-width: 400px) {
+  .nav-container { gap: 0.3rem; padding: 0 1rem; }
+  .logo-img { height: 34px; }
+  #theme-toggle { width: 36px; height: 36px; }
+}
+
+/* ── Testimonial slider: ensure no overflow ─────────────── */
+.testimonial-slider { overflow: hidden; width: 100%; }
+
+/* ── About image: better sizing on mid-mobile ───────────── */
+@media (max-width: 600px) {
+  .about-img-placeholder { width: 260px; height: 260px; }
+  .ai-ring.ring-3 { width: 260px; height: 260px; margin: -130px 0 0 -130px; }
+  .ai-ring.ring-2 { width: 190px; height: 190px; margin: -95px 0 0 -95px; }
+  .ai-ring.ring-1 { width: 125px; height: 125px; margin: -62.5px 0 0 -62.5px; }
+}
+
+/* ── Section header: less bottom gap on mobile ──────────── */
+@media (max-width: 600px) {
+  .section-header { margin-bottom: 2.5rem; }
+  .section { padding: 4rem 0; }
+}
+
+/* ── Buttons: full-width friendly on tiny screens ───────── */
+@media (max-width: 360px) {
+  .hero-cta .btn { max-width: 100%; font-size: 0.84rem; }
+  .btn { padding: 0.65rem 1rem; }
+}
+
+/* ── Scroll to top: don't overlap Google review badge ───── */
+@media (max-width: 480px) {
+  #scroll-top { bottom: 1rem; right: 1rem; }
+  #google-review-float { bottom: 1rem; left: 0.75rem; }
 }
 
 /* =========================================================

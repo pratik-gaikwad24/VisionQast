@@ -192,7 +192,7 @@ hamburger.addEventListener('click', () => {
   navLinks.classList.toggle('open');
 });
 
-navLinks.querySelectorAll('.nav-link').forEach(link => {
+navLinks.querySelectorAll('.nav-link, .nav-cta-mobile a').forEach(link => {
   link.addEventListener('click', () => {
     hamburger.classList.remove('open');
     navLinks.classList.remove('open');
