@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seed Projects — VisionQast Admin</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .seed-wrap { max-width: 760px; margin: 3rem auto; padding: 0 1.25rem; }
+    .seed-card { background: var(--surface, #fff); border: 1px solid rgba(22,20,46,0.08); border-radius: 1rem; padding: 2rem; box-shadow: 0 10px 40px rgba(22,20,46,0.06); }
+    .seed-card h1 { margin: 0 0 .5rem; font-size: 22px; }
+    .seed-card p { color: var(--text-muted, #6b7280); font-size: 14px; line-height: 1.6; }
+    .seed-note { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: #b45309; border-radius: .6rem; padding: .75rem 1rem; font-size: 13px; margin: 1rem 0; }
+    .seed-log { background: #0f1021; color: #c7d2fe; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; line-height: 1.7; border-radius: .6rem; padding: 1rem; margin-top: 1.25rem; max-height: 320px; overflow:auto; white-space: pre-wrap; display:none; }
+    .seed-actions { display:flex; gap:.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
+    .gate { text-align:center; padding: 4rem 1rem; color: var(--text-muted,#6b7280); }
+  </style>
+</head>
+<body>
+
+<div class="seed-wrap">
+  <div class="seed-card" id="gate">
+    <div class="gate">Checking admin access…</div>
+  </div>
+
+  <div class="seed-card" id="panel" style="display:none">
+    <h1>Seed Real Projects</h1>
+    <p>This one-time tool publishes VisionQast's <strong>12 real client projects</strong> to the
+       <code>projects</code> collection so they appear on the public portfolio.</p>
+    <div class="seed-note">
+      <strong>What it does:</strong> deletes <em>every</em> existing project in Firebase (including the leftover demo
+      entries), then re-creates the 12 real projects as <strong>published</strong>. Safe to run again — it always
+      ends with exactly these 12.
+    </div>
+    <div class="seed-actions">
+      <button class="btn btn-primary" id="run-btn" onclick="runSeed()">
+        <span id="run-text">Replace projects with the real 12</span>
+        <span class="loading-spinner" id="run-spin" style="display:none;width:16px;height:16px;"></span>
+      </button>
+      <a class="btn btn-secondary" href="/admin/projects.html">← Back to Projects</a>
+      <a class="btn btn-secondary" href="/work.html" target="_blank">View live portfolio ↗</a>
+    </div>
+    <div class="seed-log" id="log"></div>
+  </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script>
+/* The 12 real projects — kept in sync with STATIC_WORK in /assets/js/script.js */
+const REAL_PROJECTS = [
+  { title:'VisionQast', category:'SaaS', featured:true,
+    shortDescription:'Our own multi-page agency platform with a full admin CMS/CRM dashboard, leads pipeline, and Firebase-powered content management.',
+    technologies:['JavaScript','Firebase','CMS/CRM','Responsive'],
+    demoURL:'https://visionqast.com', githubURL:'https://github.com/pratik-gaikwad24/VisionQast' },
+
+  { title:'Kardile Buro Nursing Home', category:'Web', featured:true,
+    shortDescription:'A nursing-home & training institute site with Firebase live data, dynamic courses and gallery, branding, and community links.',
+    technologies:['JavaScript','Firebase','Dynamic CMS','Responsive'],
+    demoURL:'https://kardile-buro-nursing-home.vercel.app', githubURL:'https://github.com/Dspgithubnow/kardile-buro-nursing-home' },
+
+  { title:'The Rising Star School', category:'Web', featured:true,
+    shortDescription:'A vibrant school website featuring an announcement slider, programs, gallery, and a complete mobile-responsive overhaul.',
+    technologies:['HTML5','CSS3','JavaScript','Responsive'],
+    demoURL:'https://the-rising-star-school.vercel.app', githubURL:'https://github.com/pratik-gaikwad24/The-_Rising_Star_School' },
+
+  { title:'The Family Dental', category:'Web', featured:true,
+    shortDescription:'SEO-optimised dental practice site for Dr. Swapnil Bade with structured-data schemas, ratings, and an image gallery.',
+    technologies:['HTML5','CSS3','SEO','Schema.org'],
+    demoURL:'https://drswapnilbade.com', githubURL:'https://github.com/pratik-gaikwad24/The_Family_Dental' },
+
+  { title:'Robotics Studio', category:'Web', featured:false,
+    shortDescription:'An engaging robotics & STEM education studio website presenting courses, programs, and student projects.',
+    technologies:['HTML5','CSS3','JavaScript','Responsive'],
+    demoURL:'https://roboticsstudio.in', githubURL:'https://github.com/Dspgithubnow/Robotics_Studio' },
+
+  { title:'Gajanan Laboratory', category:'Web', featured:false,
+    shortDescription:'A pathology laboratory website with a full test catalog and a WhatsApp-based test enquiry flow.',
+    technologies:['HTML5','CSS3','JavaScript','WhatsApp API'],
+    demoURL:'https://gajanan-laboratory-website.vercel.app', githubURL:'https://github.com/Dspgithubnow/gajanan-laboratory-website' },
+
+  { title:'NIDA Pathology Lab', category:'Web', featured:false,
+    shortDescription:'Multi-branch pathology lab website with test catalog, branch cards, working hours, and online enquiry.',
+    technologies:['HTML5','CSS3','JavaScript','SEO'],
+    demoURL:'https://nidapathologylab.in', githubURL:'https://github.com/Dspgithubnow/NIDA_Pathology_Lab' },
+
+  { title:'Shree Pathology Lab', category:'Web', featured:false,
+    shortDescription:'A pathology lab site featuring health packages, transparent pricing, and easy contact for bookings.',
+    technologies:['HTML5','CSS3','JavaScript','Responsive'],
+    demoURL:'https://shreepathlab.com', githubURL:'https://github.com/Dspgithubnow/Shree_Pathology_lab' },
+
+  { title:'Ashoka Labs', category:'Web', featured:false,
+    shortDescription:'A diagnostic lab website with an optimised gallery and clear service presentation for patients.',
+    technologies:['HTML5','CSS3','JavaScript','SEO'],
+    demoURL:'https://ashokalab.in', githubURL:'https://github.com/Dspgithubnow/AshokaLabs' },
+
+  { title:'Be Well Clinic', category:'Web', featured:false,
+    shortDescription:'A clean, trust-building website for a multi-speciality clinic with services, appointment enquiry, and responsive layouts.',
+    technologies:['HTML5','CSS3','JavaScript','Vercel'],
+    demoURL:'https://be-well-clinic.vercel.app', githubURL:'https://github.com/pratik-gaikwad24/BeWell_clinic' },
+
+  { title:'S4S Coatings', category:'Web', featured:false,
+    shortDescription:'A bold industrial brand site for a coatings manufacturer showcasing products, capabilities, and enquiries.',
+    technologies:['HTML5','CSS3','JavaScript','Vercel'],
+    demoURL:'https://s4s-coatings.vercel.app', githubURL:'https://github.com/Dspgithubnow/S4S_Coatings' },
+
+  { title:'AP Copiers', category:'Web', featured:false,
+    shortDescription:'Business website for a copier & printing solutions company, with a PWA favicon/manifest and branded tab identity.',
+    technologies:['HTML5','CSS3','PWA','SEO'],
+    demoURL:'https://apcopiers.in', githubURL:'https://github.com/pratik-gaikwad24/AP_copies' },
+];
+
+function slugify(s){return String(s).toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/[\s_]+/g,'-').replace(/-+/g,'-');}
+
+function log(msg){
+  const el = document.getElementById('log');
+  el.style.display = 'block';
+  el.textContent += msg + '\n';
+  el.scrollTop = el.scrollHeight;
+}
+
+/* ── Auth gate ── */
+if (typeof auth === 'undefined') {
+  document.getElementById('gate').innerHTML =
+    '<div class="gate">Firebase is not configured. Add credentials in <code>assets/js/firebase-config.js</code>.</div>';
+} else {
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) { window.location.href = '/admin/'; return; }
+    try {
+      const adminDoc = await db.collection('admins').doc(user.uid).get();
+      if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+        await auth.signOut();
+        window.location.href = '/admin/';
+        return;
+      }
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('panel').style.display = 'block';
+    } catch (e) {
+      document.getElementById('gate').innerHTML =
+        '<div class="gate">Could not verify admin access: ' + e.message + '</div>';
+    }
+  });
+}
+
+let running = false;
+async function runSeed(){
+  if (running) return;
+  running = true;
+  const btn = document.getElementById('run-btn');
+  const txt = document.getElementById('run-text');
+  const spin = document.getElementById('run-spin');
+  btn.disabled = true; txt.style.display='none'; spin.style.display='inline-block';
+
+  try {
+    log('Reading existing projects…');
+    const snap = await db.collection('projects').get();
+    log('Found ' + snap.size + ' existing project(s).');
+
+    /* Delete all existing projects in a batch */
+    if (snap.size) {
+      const batch = db.batch();
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+      log('Deleted ' + snap.size + ' existing project(s) (demo + any old data).');
+    }
+
+    /* Insert the 12 real projects */
+    log('Publishing ' + REAL_PROJECTS.length + ' real projects…');
+    let n = 0;
+    for (const p of REAL_PROJECTS) {
+      await db.collection('projects').add({
+        title: p.title,
+        slug: slugify(p.title),
+        shortDescription: p.shortDescription,
+        description: p.shortDescription,
+        category: p.category,
+        status: 'published',
+        demoURL: p.demoURL,
+        githubURL: p.githubURL,
+        featured: !!p.featured,
+        technologies: p.technologies,
+        imageURL: '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      n++;
+      log('  ✓ ' + n + '. ' + p.title);
+    }
+
+    log('\nDone! ' + n + ' projects are now published.');
+    log('Open the live portfolio (hard-refresh) to see them: /work.html');
+  } catch (e) {
+    log('\nERROR: ' + e.message);
+    log('If this says "permission denied", make sure you are logged in as an admin.');
+  } finally {
+    running = false;
+    btn.disabled = false; txt.style.display='inline'; spin.style.display='none';
+  }
+}
+</script>
+</body>
+</html>
