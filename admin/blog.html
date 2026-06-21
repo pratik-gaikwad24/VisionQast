@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — VisionQast Admin</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+</head>
+<body>
+
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="admin-header" id="admin-header"></header>
+    <main class="admin-main">
+
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-title">Blog</div>
+          <div class="page-subtitle">Write and manage your content</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Post
+        </button>
+      </div>
+
+      <div class="filters-bar">
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-tab" onclick="setFilter('published',this)">Published</button>
+          <button class="filter-tab" onclick="setFilter('draft',this)">Drafts</button>
+        </div>
+        <div class="filter-spacer"></div>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search posts…" oninput="filterBlogs()" id="blog-search" />
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Post</th>
+              <th>Author</th>
+              <th>Tags</th>
+              <th>Status</th>
+              <th>Published</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="blog-body">
+            <tr><td colspan="6"><div class="empty-state"><div class="loading-spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-info" id="blog-count">Loading…</div>
+        <div class="pagination-btns" id="blog-pages"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add / Edit Modal (full-screen for editor) -->
+<div class="modal-overlay" id="blog-modal">
+  <div class="modal modal-lg" style="max-width:900px">
+    <div class="modal-header">
+      <div class="modal-title" id="blog-modal-title">New Post</div>
+      <button class="modal-close" onclick="closeModal('blog-modal')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:82vh;overflow-y:auto">
+      <input type="hidden" id="blog-id" />
+
+      <div class="form-row">
+        <div class="form-group" style="flex:2">
+          <label class="form-label">Post Title <span class="required">*</span></label>
+          <input type="text" id="blog-title" class="form-control" placeholder="e.g. How We Built a Scalable AI Platform" oninput="autoSlugBlog()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="blog-status" class="form-control">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Slug</label>
+          <input type="text" id="blog-slug" class="form-control" placeholder="auto-generated" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Author <span class="required">*</span></label>
+          <input type="text" id="blog-author" class="form-control" placeholder="e.g. Dvij Shah" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Excerpt / Summary</label>
+        <textarea id="blog-excerpt" class="form-control" rows="2" placeholder="A short summary shown in post cards…" maxlength="200"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <input type="text" id="blog-category" class="form-control" placeholder="e.g. Engineering" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Read Time (min)</label>
+          <input type="number" id="blog-readtime" class="form-control" placeholder="5" min="1" max="60" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tags</label>
+        <div class="tags-input-wrap" id="blog-tags-wrap">
+          <input type="text" class="tags-input" placeholder="Type tag + Enter (e.g. AI, React)" />
+        </div>
+      </div>
+
+      <!-- Cover Image -->
+      <div class="form-group">
+        <label class="form-label">Cover Image (stored as compressed Base64)</label>
+        <div class="img-upload-zone">
+          <input type="file" id="blog-img-input" accept="image/*" />
+          <div class="img-upload-icon">🖼</div>
+          <div class="img-upload-text">Click or drag image here</div>
+          <div class="img-upload-hint">JPEG / PNG — compressed on upload</div>
+          <div class="img-preview-wrap" id="blog-img-preview-wrap" style="display:none">
+            <img id="blog-img-preview" class="img-preview" style="max-height:160px" />
+            <div class="img-preview-remove" onclick="removeBlogImage()">×</div>
+          </div>
+        </div>
+        <input type="hidden" id="blog-img-data" />
+      </div>
+
+      <!-- SEO -->
+      <details style="margin-bottom:1rem">
+        <summary style="font-size:13px;font-weight:600;color:var(--text-sec);cursor:pointer;user-select:none;padding:.5rem 0">SEO Metadata</summary>
+        <div style="padding-top:.75rem">
+          <div class="form-group">
+            <label class="form-label">Meta Title (for search engines)</label>
+            <input type="text" id="blog-meta-title" class="form-control" placeholder="Overrides post title in search results" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Meta Description</label>
+            <textarea id="blog-meta-desc" class="form-control" rows="2" placeholder="160 character description for search results…" maxlength="160"></textarea>
+          </div>
+        </div>
+      </details>
+
+      <!-- Content editor -->
+      <div class="form-group">
+        <label class="form-label">Content <span class="required">*</span></label>
+        <div class="editor-toolbar" id="editor-toolbar"></div>
+        <div class="editor-area" id="blog-content" placeholder="Write your post content here…"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('blog-modal')">Cancel</button>
+      <button class="btn btn-secondary" onclick="saveBlog('draft')">Save Draft</button>
+      <button class="btn btn-primary" onclick="saveBlog()">
+        <span id="blog-save-txt">Publish</span>
+        <span class="loading-spinner" id="blog-save-spin" style="display:none;width:14px;height:14px"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script src="/assets/js/admin.js"></script>
+<script>
+initAdminLayout('blog', 'Blog', 'Content / Blog');
+
+let allPosts = [];
+let blogTags = [];
+let currentFilter = 'all';
+const PAGE_SIZE = 12;
+let currentPage = 1;
+
+requireAdmin(loadBlogs);
+
+setupTagsInput('blog-tags-wrap', blogTags);
+
+/* Image upload */
+document.addEventListener('DOMContentLoaded', () => {
+  initEditor('editor-toolbar', 'blog-content');
+  document.getElementById('blog-img-input').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try {
+      const b64 = await compressImage(file, 1200, 0.8);
+      document.getElementById('blog-img-data').value = b64;
+      const prev = document.getElementById('blog-img-preview');
+      prev.src = b64; prev.style.display = 'block';
+      document.getElementById('blog-img-preview-wrap').style.display = 'block';
+      showToast('Cover image ready (' + Math.round((b64.length*3)/4/1024) + ' KB)', 'success');
+    } catch(err) { showToast(err.message, 'error'); }
+  });
+});
+
+async function loadBlogs() {
+  if (typeof db === 'undefined') { showToast('Configure Firebase', 'warning'); renderBlogs([]); return; }
+  try {
+    const snap = await db.collection('blogs').orderBy('createdAt', 'desc').get();
+    allPosts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    filterBlogs();
+  } catch(e) { showToast('Error: ' + e.message, 'error'); renderBlogs([]); }
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentPage = 1;
+  filterBlogs();
+}
+
+function filterBlogs() {
+  const q = (document.getElementById('blog-search')?.value || '').toLowerCase();
+  let items = [...allPosts];
+  if (currentFilter === 'published') items = items.filter(p => p.status === 'published');
+  if (currentFilter === 'draft')     items = items.filter(p => p.status !== 'published');
+  if (q) items = items.filter(p => (p.title||'').toLowerCase().includes(q) || (p.author||'').toLowerCase().includes(q));
+  renderBlogs(items);
+}
+
+function renderBlogs(items) {
+  const tbody = document.getElementById('blog-body');
+  const total = items.length;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page  = items.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('blog-count').textContent = `${total} post${total !== 1 ? 's' : ''}`;
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">
+      <div class="empty-icon">✍️</div>
+      <div class="empty-title">No posts yet</div>
+      <div class="empty-text">Click "New Post" to write your first blog article.</div>
+    </div></td></tr>`;
+    document.getElementById('blog-pages').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = page.map(p => `
+    <tr>
+      <td>
+        <div class="td-img">
+          ${p.coverImage
+            ? `<img class="td-thumb" src="${safeUrl(p.coverImage)}" alt="${escapeHtml(p.title)}" style="object-fit:cover" />`
+            : `<div class="td-thumb" style="background:linear-gradient(135deg,#00c6ff22,#a855f722);display:flex;align-items:center;justify-content:center;font-size:16px">✍</div>`
+          }
+          <div>
+            <span class="td-title">${escapeHtml(p.title || '—')}</span>
+            <span class="td-meta">${escapeHtml(p.excerpt ? p.excerpt.slice(0,60) + '…' : '')}</span>
+          </div>
+        </div>
+      </td>
+      <td style="color:var(--text-sec)">${escapeHtml(p.author || '—')}</td>
+      <td>
+        <div style="display:flex;flex-wrap:wrap;gap:3px">
+          ${(p.tags || []).slice(0,3).map(t => `<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(22,20,46,0.05);color:var(--text-muted)">${escapeHtml(t)}</span>`).join('')}
+        </div>
+      </td>
+      <td>${badgeHTML(p.status || 'draft')}</td>
+      <td style="color:var(--text-muted);font-size:12px;white-space:nowrap">${formatDate(p.createdAt)}</td>
+      <td>
+        <div class="td-actions">
+          <button class="btn btn-sm btn-secondary" onclick="editBlog('${p.id}')">Edit</button>
+          ${p.status !== 'published'
+            ? `<button class="btn btn-sm btn-success" onclick="quickPublish('${p.id}')">Publish</button>`
+            : `<button class="btn btn-sm btn-ghost" onclick="quickDraft('${p.id}')">Unpublish</button>`
+          }
+          <button class="btn btn-sm btn-danger" onclick="deleteBlog('${p.id}','${(p.title||'').replace(/'/g,"\\'")}')">Del</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const pEl   = document.getElementById('blog-pages');
+  if (pages <= 1) { pEl.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+  for (let i=1;i<=pages;i++) html += `<button class="page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+  pEl.innerHTML = html;
+}
+
+function goPage(p) { currentPage = p; filterBlogs(); window.scrollTo(0,0); }
+
+function openAddModal() {
+  document.getElementById('blog-modal-title').textContent = 'New Post';
+  document.getElementById('blog-id').value = '';
+  document.getElementById('blog-title').value = '';
+  document.getElementById('blog-slug').value = '';
+  document.getElementById('blog-author').value = '';
+  document.getElementById('blog-excerpt').value = '';
+  document.getElementById('blog-category').value = '';
+  document.getElementById('blog-readtime').value = '';
+  document.getElementById('blog-status').value = 'draft';
+  document.getElementById('blog-meta-title').value = '';
+  document.getElementById('blog-meta-desc').value = '';
+  document.getElementById('blog-img-data').value = '';
+  document.getElementById('blog-img-preview').src = '';
+  document.getElementById('blog-img-preview-wrap').style.display = 'none';
+  document.getElementById('blog-content').innerHTML = '';
+  blogTags.length = 0;
+  document.querySelectorAll('#blog-tags-wrap .tag-chip').forEach(c => c.remove());
+  openModal('blog-modal');
+}
+
+function editBlog(id) {
+  const p = allPosts.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('blog-modal-title').textContent = 'Edit Post';
+  document.getElementById('blog-id').value = p.id;
+  document.getElementById('blog-title').value = p.title || '';
+  document.getElementById('blog-slug').value = p.slug || '';
+  document.getElementById('blog-author').value = p.author || '';
+  document.getElementById('blog-excerpt').value = p.excerpt || '';
+  document.getElementById('blog-category').value = p.category || '';
+  document.getElementById('blog-readtime').value = p.readTime || '';
+  document.getElementById('blog-status').value = p.status || 'draft';
+  document.getElementById('blog-meta-title').value = p.metaTitle || '';
+  document.getElementById('blog-meta-desc').value = p.metaDescription || '';
+  document.getElementById('blog-img-data').value = p.coverImage || '';
+  const prev = document.getElementById('blog-img-preview');
+  const wrap = document.getElementById('blog-img-preview-wrap');
+  if (p.coverImage) { prev.src = p.coverImage; prev.style.display='block'; wrap.style.display='block'; }
+  else { prev.src=''; prev.style.display='none'; wrap.style.display='none'; }
+  document.getElementById('blog-content').innerHTML = p.content || '';
+  blogTags.length = 0;
+  (p.tags || []).forEach(t => blogTags.push(t));
+  document.querySelectorAll('#blog-tags-wrap .tag-chip').forEach(c => c.remove());
+  const inp = document.querySelector('#blog-tags-wrap .tags-input');
+  blogTags.forEach(t => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${t}<button class="tag-remove" onclick="this.parentElement.remove();blogTags.splice(blogTags.indexOf('${t}'),1)">&times;</button>`;
+    document.getElementById('blog-tags-wrap').insertBefore(chip, inp);
+  });
+  openModal('blog-modal');
+}
+
+function autoSlugBlog() {
+  document.getElementById('blog-slug').value = generateSlug(document.getElementById('blog-title').value);
+}
+
+function removeBlogImage() {
+  document.getElementById('blog-img-data').value = '';
+  document.getElementById('blog-img-preview').src = '';
+  document.getElementById('blog-img-preview-wrap').style.display = 'none';
+}
+
+async function saveBlog(forceStatus) {
+  const title   = document.getElementById('blog-title').value.trim();
+  const author  = document.getElementById('blog-author').value.trim();
+  const content = document.getElementById('blog-content').innerHTML.trim();
+  if (!title)   { showToast('Title is required', 'error'); return; }
+  if (!author)  { showToast('Author is required', 'error'); return; }
+  if (!content || content === '<br>') { showToast('Content is required', 'error'); return; }
+  if (typeof db === 'undefined') { showToast('Firebase not configured', 'error'); return; }
+
+  const data = {
+    title,
+    slug:            document.getElementById('blog-slug').value || generateSlug(title),
+    author,
+    excerpt:         document.getElementById('blog-excerpt').value.trim(),
+    category:        document.getElementById('blog-category').value.trim(),
+    readTime:        parseInt(document.getElementById('blog-readtime').value) || 5,
+    status:          forceStatus || document.getElementById('blog-status').value,
+    content,
+    coverImage:      document.getElementById('blog-img-data').value || '',
+    tags:            [...blogTags],
+    metaTitle:       document.getElementById('blog-meta-title').value.trim(),
+    metaDescription: document.getElementById('blog-meta-desc').value.trim(),
+  };
+
+  const id = document.getElementById('blog-id').value;
+  document.getElementById('blog-save-txt').style.display = 'none';
+  document.getElementById('blog-save-spin').style.display = 'inline-block';
+
+  try {
+    if (id) {
+      await fsUpdate('blogs', id, data);
+      const idx = allPosts.findIndex(p => p.id === id);
+      if (idx > -1) allPosts[idx] = { id, ...data };
+      showToast('Post updated!', 'success');
+    } else {
+      const ref = await fsAdd('blogs', data);
+      allPosts.unshift({ id: ref.id, ...data });
+      showToast(data.status === 'published' ? 'Post published!' : 'Draft saved!', 'success');
+    }
+    closeModal('blog-modal');
+    filterBlogs();
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  } finally {
+    document.getElementById('blog-save-txt').style.display = 'inline';
+    document.getElementById('blog-save-spin').style.display = 'none';
+  }
+}
+
+async function quickPublish(id) {
+  if (typeof db === 'undefined') return;
+  try {
+    await fsUpdate('blogs', id, { status: 'published' });
+    const idx = allPosts.findIndex(p => p.id === id);
+    if (idx > -1) allPosts[idx].status = 'published';
+    filterBlogs();
+    showToast('Post published!', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function quickDraft(id) {
+  if (typeof db === 'undefined') return;
+  try {
+    await fsUpdate('blogs', id, { status: 'draft' });
+    const idx = allPosts.findIndex(p => p.id === id);
+    if (idx > -1) allPosts[idx].status = 'draft';
+    filterBlogs();
+    showToast('Post unpublished', 'info');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+function deleteBlog(id, title) {
+  confirmAction(`Delete post "<strong>${title}</strong>"?`, async () => {
+    try {
+      await fsDelete('blogs', id);
+      allPosts = allPosts.filter(p => p.id !== id);
+      filterBlogs();
+      showToast('Post deleted', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
+  });
+}
+</script>
+</body>
+</html>

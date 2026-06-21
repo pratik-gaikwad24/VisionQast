@@ -84,27 +84,40 @@ RewriteRule ^(.*)/$ /$1 [R=301,L]
 
 # ── Security Headers ──────────────────────────────────
 <IfModule mod_headers.c>
-  # Prevent clickjacking
-  Header always set X-Frame-Options "SAMEORIGIN"
+  # Prevent clickjacking (DENY = not even same origin may frame us)
+  Header always set X-Frame-Options "DENY"
 
   # Prevent MIME type sniffing
   Header always set X-Content-Type-Options "nosniff"
 
-  # Enable XSS protection
+  # Legacy XSS protection (modern browsers rely on CSP below)
   Header always set X-XSS-Protection "1; mode=block"
 
   # Referrer policy
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
 
   # Permissions policy
-  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
 
-  # HSTS (enable only after SSL is active — 1 year)
-  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+  # HSTS — force HTTPS for 1 year (safe to enable; production is HTTPS)
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+  # Content Security Policy — restricts script/style/connect sources.
+  # Allows the Firebase compat SDK (gstatic), Google Fonts, Base64 images,
+  # and Firebase/Firestore/Auth endpoints. 'unsafe-inline' is required by the
+  # inline scripts/handlers; stored-XSS is mitigated by server-side escaping.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.google-analytics.com wss://*.firebaseio.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
 
   # Remove Server header
   Header unset Server
   Header unset X-Powered-By
+</IfModule>
+
+# ── Block access to sensitive files ───────────────────
+<IfModule mod_authz_core.c>
+  <FilesMatch "(^\.|firestore\.rules|firebase\.json|\.firebaserc|firestore\.indexes\.json)$">
+    Require all denied
+  </FilesMatch>
 </IfModule>
 
 # ── Prevent Hotlinking ────────────────────────────────

@@ -1,0 +1,114 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper: check if request is from an authenticated admin ──
+    function isAdmin() {
+      return request.auth != null
+          && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+          && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // ── Projects ─────────────────────────────────────────────────
+    // Public: read published projects only.
+    // Admin:  read ALL (incl. drafts) + full CRUD.
+    // NOTE: the `|| isAdmin()` is required so the admin dashboard can list
+    // unpublished docs — without it, the admin list query is rejected entirely.
+    match /projects/{docId} {
+      allow read:   if resource.data.status == 'published' || isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ── Services ─────────────────────────────────────────────────
+    // Public: read active services only. Admin: read all + CRUD.
+    match /services/{docId} {
+      allow read:   if resource.data.status == 'active' || isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ── Blog Posts ───────────────────────────────────────────────
+    // Public: read published posts only. Admin: read all + CRUD.
+    match /blogs/{docId} {
+      allow read:   if resource.data.status == 'published' || isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ── Testimonials ─────────────────────────────────────────────
+    // Public: read active testimonials only. Admin: read all + CRUD.
+    match /testimonials/{docId} {
+      allow read:   if resource.data.status == 'active' || isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ── Contacts / Leads ─────────────────────────────────────────
+    // Anyone can submit a contact form (create)
+    // Only admins can read, update, or delete leads
+    match /contacts/{docId} {
+      // Public can submit the contact form, but the payload is strictly
+      // validated: only known fields, capped sizes, valid email, and the
+      // status is forced to 'new' (a visitor can't self-mark 'converted').
+      allow create: if request.resource.data.keys().hasOnly(
+                          ['name','email','phone','company','budget','service','message','status','createdAt'])
+                   && request.resource.data.keys().hasAll(['name','email','message'])
+                   && request.resource.data.name is string
+                   && request.resource.data.name.size() >= 1
+                   && request.resource.data.name.size() <= 100
+                   && request.resource.data.email is string
+                   && request.resource.data.email.size() <= 150
+                   && request.resource.data.email.matches('^[^@]+@[^@]+[.][^@]+$')
+                   && request.resource.data.message is string
+                   && request.resource.data.message.size() >= 1
+                   && request.resource.data.message.size() <= 5000
+                   && (!('phone'   in request.resource.data) || (request.resource.data.phone   is string && request.resource.data.phone.size()   <= 40))
+                   && (!('company' in request.resource.data) || (request.resource.data.company is string && request.resource.data.company.size() <= 120))
+                   && (!('budget'  in request.resource.data) || (request.resource.data.budget  is string && request.resource.data.budget.size()  <= 60))
+                   && (!('service' in request.resource.data) || (request.resource.data['service'] is string && request.resource.data['service'].size() <= 80))
+                   && (!('status'  in request.resource.data) || request.resource.data.status == 'new');
+      allow read:   if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ── Admins ───────────────────────────────────────────────────
+    // Only existing admins can manage admin accounts
+    match /admins/{uid} {
+      allow read:   if isAdmin() || request.auth.uid == uid;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin() && request.auth.uid != uid; // can't delete self
+    }
+
+    // ── Settings ─────────────────────────────────────────────────
+    // Public: can read company info (for dynamic footer/contact)
+    // Admin: full control
+    match /settings/{docId} {
+      allow read:   if docId == 'company'; // public company info
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ── Newsletter subscriptions (optional) ──────────────────────
+    match /newsletter/{docId} {
+      allow create: if request.resource.data.keys().hasOnly(['email','createdAt'])
+                   && request.resource.data.email is string
+                   && request.resource.data.email.size() <= 150
+                   && request.resource.data.email.matches('^[^@]+@[^@]+[.][^@]+$');
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── Catch-all: deny everything else ──────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

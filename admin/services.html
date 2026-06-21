@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services — VisionQast Admin</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .services-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
+    .service-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg);
+      padding:1.25rem; transition:var(--transition);
+    }
+    .service-card:hover { border-color:rgba(22,20,46,0.1); background:var(--bg-card-hov); }
+    .service-icon-wrap { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:1rem; }
+    .service-card-title { font-size:15px; font-weight:700; color:var(--text); margin-bottom:.25rem; font-family:'Space Grotesk',sans-serif; letter-spacing:-.02em; }
+    .service-card-desc  { font-size:12.5px; color:var(--text-muted); line-height:1.5; margin-bottom:.875rem; }
+    .feature-pill { display:inline-block; font-size:11px; padding:2px 8px; border-radius:6px; background:rgba(22,20,46,0.04); border:1px solid var(--border); color:var(--text-muted); margin:2px 2px 0 0; }
+    .icon-picker { display:flex; flex-wrap:wrap; gap:6px; padding:.5rem; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius); max-height:120px; overflow-y:auto; }
+    .icon-opt { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:pointer; font-size:18px; transition:var(--transition); border:2px solid transparent; }
+    .icon-opt:hover { background:rgba(22,20,46,0.06); }
+    .icon-opt.selected { border-color:var(--accent); background:rgba(99,102,241,0.1); }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="admin-header" id="admin-header"></header>
+    <main class="admin-main">
+
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-title">Services</div>
+          <div class="page-subtitle">Manage the services displayed on the public website</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Service
+        </button>
+      </div>
+
+      <div class="filters-bar">
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-tab" onclick="setFilter('active',this)">Active</button>
+          <button class="filter-tab" onclick="setFilter('inactive',this)">Inactive</button>
+        </div>
+        <div class="filter-spacer"></div>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search services…" oninput="filterServices()" id="svc-search" />
+        </div>
+      </div>
+
+      <div class="services-grid" id="services-grid">
+        <div style="grid-column:1/-1"><div class="empty-state"><div class="loading-spinner"></div></div></div>
+      </div>
+
+      <div id="services-empty" style="display:none">
+        <div class="empty-state">
+          <div class="empty-icon">⚙️</div>
+          <div class="empty-title">No services yet</div>
+          <div class="empty-text">Add your first service to display it on the website.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" id="service-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="svc-modal-title">Add Service</div>
+      <button class="modal-close" onclick="closeModal('service-modal')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:80vh;overflow-y:auto">
+      <input type="hidden" id="svc-id" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Service Title <span class="required">*</span></label>
+          <input type="text" id="svc-title" class="form-control" placeholder="e.g. Web Development" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="svc-status" class="form-control">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description <span class="required">*</span></label>
+        <textarea id="svc-desc" class="form-control" rows="3" placeholder="Brief description of this service…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Icon</label>
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+          <div id="svc-icon-preview" style="width:44px;height:44px;border-radius:10px;background:rgba(99,102,241,0.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💡</div>
+          <input type="text" id="svc-icon-input" class="form-control" placeholder="Paste any emoji e.g. 🚀" oninput="previewIcon(this.value)" maxlength="4" style="width:120px" />
+        </div>
+        <div class="icon-picker" id="icon-picker">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Gradient (CSS)</label>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input type="text" id="svc-gradient" class="form-control" placeholder="linear-gradient(135deg,#6366f1,#a855f7)" />
+          <div id="grad-preview" style="width:40px;height:40px;border-radius:8px;flex-shrink:0;border:1px solid var(--border)"></div>
+        </div>
+        <div class="form-hint">Used as the icon background. Quick picks: &nbsp;
+          <button type="button" class="btn btn-sm btn-ghost" style="font-size:11px" onclick="setGrad('linear-gradient(135deg,#6366f1,#a855f7)')">Indigo</button>
+          <button type="button" class="btn btn-sm btn-ghost" style="font-size:11px" onclick="setGrad('linear-gradient(135deg,#00c6ff,#0072ff)')">Cyan</button>
+          <button type="button" class="btn btn-sm btn-ghost" style="font-size:11px" onclick="setGrad('linear-gradient(135deg,#f59e0b,#ef4444)')">Orange</button>
+          <button type="button" class="btn btn-sm btn-ghost" style="font-size:11px" onclick="setGrad('linear-gradient(135deg,#22c55e,#16a34a)')">Green</button>
+          <button type="button" class="btn btn-sm btn-ghost" style="font-size:11px" onclick="setGrad('linear-gradient(135deg,#ec4899,#a855f7)')">Pink</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Features / Key Points</label>
+        <div class="tags-input-wrap" id="features-wrap">
+          <input type="text" class="tags-input" placeholder="Type feature + Enter (e.g. Custom CMS)" />
+        </div>
+        <div class="form-hint">Press Enter to add each feature bullet point</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Display Order</label>
+        <input type="number" id="svc-order" class="form-control" placeholder="1" min="1" style="width:100px" />
+        <div class="form-hint">Lower number = appears first on website</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('service-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveService()">
+        <span id="svc-save-txt">Save Service</span>
+        <span class="loading-spinner" id="svc-save-spin" style="display:none;width:14px;height:14px"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script src="/assets/js/admin.js"></script>
+<script>
+initAdminLayout('services', 'Services', 'Content / Services');
+
+let allServices = [];
+let featureTags = [];
+let currentFilter = 'all';
+
+const ICONS = ['🚀','💡','⚡','🌐','📱','🤖','☁️','🔐','🎨','📊','🛠','🔧','💻','🏗','🔗','📡','🧠','⚙️','🔮','🎯','🌟','📈','🛡','🔬'];
+
+requireAdmin(loadServices);
+
+/* Populate icon picker */
+document.getElementById('icon-picker').innerHTML = ICONS.map(ic =>
+  `<div class="icon-opt" onclick="selectIcon('${ic}')" title="${ic}">${ic}</div>`
+).join('');
+
+let features = [];
+setupTagsInput('features-wrap', features);
+
+/* Gradient preview */
+document.getElementById('svc-gradient').addEventListener('input', function() {
+  document.getElementById('grad-preview').style.background = this.value;
+});
+
+function setGrad(g) {
+  document.getElementById('svc-gradient').value = g;
+  document.getElementById('grad-preview').style.background = g;
+}
+
+function previewIcon(v) {
+  document.getElementById('svc-icon-preview').textContent = v || '💡';
+  document.querySelectorAll('.icon-opt').forEach(o => {
+    o.classList.toggle('selected', o.textContent === v);
+  });
+}
+
+function selectIcon(ic) {
+  document.getElementById('svc-icon-input').value = ic;
+  document.getElementById('svc-icon-preview').textContent = ic;
+  document.querySelectorAll('.icon-opt').forEach(o => o.classList.toggle('selected', o.textContent === ic));
+}
+
+async function loadServices() {
+  if (typeof db === 'undefined') { showToast('Configure Firebase', 'warning'); renderServices([]); return; }
+  try {
+    const snap = await db.collection('services').orderBy('order').get();
+    allServices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    filterServices();
+  } catch(e) {
+    /* order field may not exist on first load */
+    try {
+      const snap = await db.collection('services').get();
+      allServices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      filterServices();
+    } catch(e2) { showToast('Error loading services: ' + e2.message, 'error'); renderServices([]); }
+  }
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  filterServices();
+}
+
+function filterServices() {
+  const q = (document.getElementById('svc-search')?.value || '').toLowerCase();
+  let items = [...allServices];
+  if (currentFilter === 'active')   items = items.filter(s => s.status === 'active' || !s.status);
+  if (currentFilter === 'inactive') items = items.filter(s => s.status === 'inactive');
+  if (q) items = items.filter(s => (s.title||'').toLowerCase().includes(q));
+  renderServices(items);
+}
+
+function renderServices(items) {
+  const grid  = document.getElementById('services-grid');
+  const empty = document.getElementById('services-empty');
+  if (!items.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = items.map(s => `
+    <div class="service-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.875rem">
+        <div class="service-icon-wrap" style="background:${escapeHtml(s.gradient || 'rgba(99,102,241,0.12)')}22">${escapeHtml(s.icon || '⚙️')}</div>
+        ${badgeHTML(s.status || 'active')}
+      </div>
+      <div class="service-card-title">${escapeHtml(s.title || '—')}</div>
+      <div class="service-card-desc">${escapeHtml((s.description || '').slice(0,100))}${(s.description||'').length>100?'…':''}</div>
+      <div style="margin-bottom:.875rem">
+        ${(s.features || []).slice(0,3).map(f => `<span class="feature-pill">${escapeHtml(f)}</span>`).join('')}
+        ${(s.features || []).length > 3 ? `<span class="feature-pill">+${s.features.length - 3} more</span>` : ''}
+      </div>
+      <div class="td-actions">
+        <button class="btn btn-sm btn-secondary" style="flex:1;justify-content:center" onclick="editService('${s.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteService('${s.id}','${(s.title||'').replace(/'/g,"\\'")}')">Del</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openAddModal() {
+  document.getElementById('svc-modal-title').textContent = 'Add Service';
+  document.getElementById('svc-id').value = '';
+  document.getElementById('svc-title').value = '';
+  document.getElementById('svc-desc').value = '';
+  document.getElementById('svc-icon-input').value = '💡';
+  document.getElementById('svc-icon-preview').textContent = '💡';
+  document.getElementById('svc-gradient').value = 'linear-gradient(135deg,#6366f1,#a855f7)';
+  document.getElementById('grad-preview').style.background = 'linear-gradient(135deg,#6366f1,#a855f7)';
+  document.getElementById('svc-status').value = 'active';
+  document.getElementById('svc-order').value = allServices.length + 1;
+  features.length = 0;
+  document.querySelectorAll('#features-wrap .tag-chip').forEach(c => c.remove());
+  openModal('service-modal');
+}
+
+function editService(id) {
+  const s = allServices.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('svc-modal-title').textContent = 'Edit Service';
+  document.getElementById('svc-id').value = s.id;
+  document.getElementById('svc-title').value = s.title || '';
+  document.getElementById('svc-desc').value = s.description || '';
+  document.getElementById('svc-icon-input').value = s.icon || '💡';
+  document.getElementById('svc-icon-preview').textContent = s.icon || '💡';
+  document.getElementById('svc-gradient').value = s.gradient || '';
+  document.getElementById('grad-preview').style.background = s.gradient || '';
+  document.getElementById('svc-status').value = s.status || 'active';
+  document.getElementById('svc-order').value = s.order || 1;
+  features.length = 0;
+  (s.features || []).forEach(f => features.push(f));
+  document.querySelectorAll('#features-wrap .tag-chip').forEach(c => c.remove());
+  const inp = document.querySelector('#features-wrap .tags-input');
+  features.forEach(f => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${f}<button class="tag-remove" onclick="this.parentElement.remove();features.splice(features.indexOf('${f}'),1)">&times;</button>`;
+    document.getElementById('features-wrap').insertBefore(chip, inp);
+  });
+  openModal('service-modal');
+}
+
+async function saveService() {
+  const title = document.getElementById('svc-title').value.trim();
+  const desc  = document.getElementById('svc-desc').value.trim();
+  if (!title) { showToast('Title is required', 'error'); return; }
+  if (!desc)  { showToast('Description is required', 'error'); return; }
+  if (typeof db === 'undefined') { showToast('Firebase not configured', 'error'); return; }
+
+  const data = {
+    title,
+    description: desc,
+    icon:     document.getElementById('svc-icon-input').value || '💡',
+    gradient: document.getElementById('svc-gradient').value || 'linear-gradient(135deg,#6366f1,#a855f7)',
+    status:   document.getElementById('svc-status').value,
+    order:    parseInt(document.getElementById('svc-order').value) || allServices.length + 1,
+    features: [...features],
+  };
+
+  const id = document.getElementById('svc-id').value;
+  document.getElementById('svc-save-txt').style.display = 'none';
+  document.getElementById('svc-save-spin').style.display = 'inline-block';
+
+  try {
+    if (id) {
+      await fsUpdate('services', id, data);
+      const idx = allServices.findIndex(s => s.id === id);
+      if (idx > -1) allServices[idx] = { id, ...data };
+      showToast('Service updated!', 'success');
+    } else {
+      const ref = await fsAdd('services', data);
+      allServices.push({ id: ref.id, ...data });
+      showToast('Service added!', 'success');
+    }
+    closeModal('service-modal');
+    filterServices();
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  } finally {
+    document.getElementById('svc-save-txt').style.display = 'inline';
+    document.getElementById('svc-save-spin').style.display = 'none';
+  }
+}
+
+function deleteService(id, title) {
+  confirmAction(`Delete "<strong>${title}</strong>"?`, async () => {
+    try {
+      await fsDelete('services', id);
+      allServices = allServices.filter(s => s.id !== id);
+      filterServices();
+      showToast('Service deleted', 'success');
+    } catch(e) { showToast('Delete failed: ' + e.message, 'error'); }
+  });
+}
+</script>
+</body>
+</html>

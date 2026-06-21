@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — VisionQast Admin</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .settings-tabs { display:flex; gap:4px; background:rgba(22,20,46,0.03); border:1px solid var(--border); padding:3px; border-radius:10px; width:fit-content; margin-bottom:1.5rem; }
+    .stab { padding:.4rem 1rem; border-radius:7px; font-size:13px; font-weight:500; color:var(--text-muted); background:none; transition:var(--transition); cursor:pointer; border:none; }
+    .stab:hover { color:var(--text-sec); }
+    .stab.active { background:rgba(99,102,241,0.15); color:var(--text); border:1px solid rgba(99,102,241,0.25); }
+    .settings-panel { display:none; }
+    .settings-panel.active { display:block; }
+    .admin-user-row { display:flex; align-items:center; gap:.75rem; padding:.75rem; background:var(--bg-card); border:1px solid var(--border); border-radius:.75rem; margin-bottom:.5rem; }
+    .setup-step { display:flex; gap:1rem; padding:1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:.75rem; margin-bottom:.75rem; }
+    .setup-num { width:28px; height:28px; border-radius:50%; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--accent); flex-shrink:0; }
+    .setup-title { font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:3px; }
+    .setup-desc  { font-size:12.5px; color:var(--text-muted); line-height:1.5; }
+    code { background:rgba(99,102,241,0.1); padding:2px 6px; border-radius:4px; font-family:monospace; font-size:12px; color:var(--cyan); }
+    .config-box { background:var(--bg-input); border:1px solid var(--border); border-radius:.5rem; padding:1rem; font-family:monospace; font-size:12px; color:var(--text-sec); white-space:pre; overflow-x:auto; line-height:1.7; margin:.5rem 0; }
+    .copy-btn { font-size:11px; padding:3px 8px; }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="admin-header" id="admin-header"></header>
+    <main class="admin-main">
+
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-title">Settings</div>
+          <div class="page-subtitle">Platform configuration and setup</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="settings-tabs">
+        <button class="stab active" onclick="switchTab('company',this)">🏢 Company</button>
+        <button class="stab" onclick="switchTab('admins',this)">👤 Admins</button>
+        <button class="stab" onclick="switchTab('firebase',this)">🔥 Firebase Setup</button>
+        <button class="stab" onclick="switchTab('seed',this)">🌱 Seed Data</button>
+      </div>
+
+      <!-- Company Info -->
+      <div class="settings-panel active" id="panel-company">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Company Information</div>
+            <div class="card-subtitle">Shown throughout the website</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Company Name</label>
+              <input type="text" id="ci-name" class="form-control" value="VisionQast" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tagline</label>
+              <input type="text" id="ci-tagline" class="form-control" placeholder="Transforming Ideas Into Digital Reality" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Short Description</label>
+            <textarea id="ci-desc" class="form-control" rows="3" placeholder="One paragraph about your company…"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" id="ci-email" class="form-control" placeholder="visionqast@gmail.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="tel" id="ci-phone" class="form-control" placeholder="+91 72493 95515" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Location</label>
+              <input type="text" id="ci-location" class="form-control" placeholder="Pune, Maharashtra, India" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Founded Year</label>
+              <input type="number" id="ci-founded" class="form-control" placeholder="2024" />
+            </div>
+          </div>
+
+          <div style="margin-top:.5rem;padding-top:1rem;border-top:1px solid var(--border)">
+            <div class="card-title" style="margin-bottom:1rem;font-size:13px">Social Links</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">LinkedIn</label>
+                <input type="url" id="ci-linkedin" class="form-control" placeholder="https://linkedin.com/company/visionqast" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">GitHub</label>
+                <input type="url" id="ci-github" class="form-control" placeholder="https://github.com/visionqast" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Twitter / X</label>
+                <input type="url" id="ci-twitter" class="form-control" placeholder="https://x.com/visionqast" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Instagram</label>
+                <input type="url" id="ci-instagram" class="form-control" placeholder="https://instagram.com/visionqast" />
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer" style="padding:1rem 0 0;border-top:1px solid var(--border);margin-top:1rem">
+            <button class="btn btn-primary" onclick="saveCompanyInfo()">
+              <span id="ci-save-txt">Save Company Info</span>
+              <span class="loading-spinner" id="ci-spin" style="display:none;width:14px;height:14px"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admins -->
+      <div class="settings-panel" id="panel-admins">
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-header">
+            <div class="card-title">Admin Accounts</div>
+            <div class="card-subtitle">Users who can access this dashboard</div>
+          </div>
+          <div id="admins-list"><div class="loading-spinner"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Add New Admin</div>
+            <div class="card-subtitle">The user must already have a Firebase Auth account</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" id="new-admin-email" class="form-control" placeholder="admin@example.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Display Name</label>
+              <input type="text" id="new-admin-name" class="form-control" placeholder="Admin Name" />
+            </div>
+          </div>
+          <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:.5rem;padding:.75rem;font-size:12.5px;color:#f59e0b;margin-bottom:1rem">
+            ⚠ The user must first create a Firebase Auth account with the same email, then their UID will be granted admin access.
+          </div>
+          <div class="form-group">
+            <label class="form-label">Firebase UID</label>
+            <input type="text" id="new-admin-uid" class="form-control" placeholder="Paste Firebase Auth UID from console" />
+            <div class="form-hint">Find in Firebase Console → Authentication → Users</div>
+          </div>
+          <button class="btn btn-primary" onclick="addAdmin()">Grant Admin Access</button>
+        </div>
+      </div>
+
+      <!-- Firebase Setup Guide -->
+      <div class="settings-panel" id="panel-firebase">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Firebase Configuration Guide</div>
+            <div class="card-subtitle">Follow these steps to connect your Firebase project</div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-num">1</div>
+            <div>
+              <div class="setup-title">Create Firebase Project</div>
+              <div class="setup-desc">Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent)">console.firebase.google.com</a> → Add project → Follow the wizard</div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-num">2</div>
+            <div>
+              <div class="setup-title">Enable Authentication</div>
+              <div class="setup-desc">Firebase Console → Authentication → Get Started → Enable <strong>Email/Password</strong> provider</div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-num">3</div>
+            <div>
+              <div class="setup-title">Create Firestore Database</div>
+              <div class="setup-desc">Firebase Console → Firestore Database → Create database → Choose <strong>Production mode</strong></div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-num">4</div>
+            <div>
+              <div class="setup-title">Get Config Keys</div>
+              <div class="setup-desc">Project Settings (⚙) → Your apps → Add web app → Copy the config object</div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-num">5</div>
+            <div>
+              <div class="setup-title">Update firebase-config.js</div>
+              <div class="setup-desc">Edit <code>assets/js/firebase-config.js</code> and replace the placeholder values:</div>
+              <div class="config-box" id="config-snippet">const firebaseConfig = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId:         "YOUR_PROJECT_ID",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId:             "YOUR_APP_ID"
+};</div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-num">6</div>
+            <div>
+              <div class="setup-title">Deploy Firestore Security Rules</div>
+              <div class="setup-desc">Install Firebase CLI: <code>npm install -g firebase-tools</code><br>Then run from project root: <code>firebase deploy --only firestore:rules</code><br>Or paste <code>firestore.rules</code> into Firebase Console → Firestore → Rules</div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-num">7</div>
+            <div>
+              <div class="setup-title">Create First Admin User</div>
+              <div class="setup-desc">
+                1. Go to Firebase Console → Authentication → Add user (email + password)<br>
+                2. Copy the generated UID<br>
+                3. Go to Firestore → Create collection <code>admins</code> → Add document with ID = your UID:<br>
+                <div class="config-box">{
+  "uid": "YOUR_USER_UID",
+  "email": "admin@visionqast.com",
+  "role": "admin",
+  "permissions": ["all"]
+}</div>
+                4. Log in at <code>/admin/</code>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:1rem;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:.75rem;margin-top:.5rem">
+            <div style="font-size:13.5px;font-weight:600;color:#22c55e;margin-bottom:.5rem">✓ Spark Plan Compatible</div>
+            <div style="font-size:12.5px;color:var(--text-muted);line-height:1.6">
+              This platform is built for Firebase Spark (free) plan.<br>
+              Images are stored as compressed Base64 inside Firestore documents (no Storage bucket needed).<br>
+              Spark limits: 1 GiB Firestore storage, 50K reads/day, 20K writes/day — more than sufficient for most agencies.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seed Data -->
+      <div class="settings-panel" id="panel-seed">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Seed Initial Data</div>
+            <div class="card-subtitle">Populate Firestore with sample data to get started quickly</div>
+          </div>
+          <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:.75rem;padding:1rem;margin-bottom:1.25rem;font-size:13px;color:#f59e0b">
+            ⚠ This will add sample data to your Firestore collections. Only do this on a fresh database.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div class="card" style="padding:1rem">
+              <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:.5rem">🚀 Services</div>
+              <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:1rem">7 sample services (Web Dev, Mobile, AI, etc.)</div>
+              <button class="btn btn-secondary btn-sm" onclick="seedServices()">Seed Services</button>
+            </div>
+            <div class="card" style="padding:1rem">
+              <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:.5rem">📁 Projects</div>
+              <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:1rem">5 sample portfolio projects</div>
+              <button class="btn btn-secondary btn-sm" onclick="seedProjects()">Seed Projects</button>
+            </div>
+            <div class="card" style="padding:1rem">
+              <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:.5rem">💬 Testimonials</div>
+              <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:1rem">4 sample client testimonials</div>
+              <button class="btn btn-secondary btn-sm" onclick="seedTestimonials()">Seed Testimonials</button>
+            </div>
+            <div class="card" style="padding:1rem">
+              <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:.5rem">✍️ Blog Posts</div>
+              <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:1rem">3 sample blog articles</div>
+              <button class="btn btn-secondary btn-sm" onclick="seedBlogs()">Seed Blog</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:1rem;width:100%;justify-content:center" onclick="seedAll()">
+            🌱 Seed All Sample Data
+          </button>
+          <div id="seed-log" style="margin-top:1rem;font-size:12.5px;color:var(--text-muted);font-family:monospace;white-space:pre-wrap;max-height:200px;overflow-y:auto;background:var(--bg-input);border:1px solid var(--border);border-radius:.5rem;padding:.75rem;display:none"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script src="/assets/js/admin.js"></script>
+<script>
+initAdminLayout('settings', 'Settings', 'Settings');
+
+requireAdmin(loadSettings);
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+  if (id === 'admins') loadAdmins();
+}
+
+async function loadSettings() {
+  if (typeof db === 'undefined') return;
+  try {
+    const snap = await db.collection('settings').doc('company').get();
+    if (snap.exists) {
+      const d = snap.data();
+      ['name','tagline','desc','email','phone','location','founded','linkedin','github','twitter','instagram'].forEach(k => {
+        const el = document.getElementById('ci-' + k);
+        if (el && d[k]) el.value = d[k];
+      });
+    }
+  } catch(e) { /* quiet */ }
+}
+
+async function saveCompanyInfo() {
+  if (typeof db === 'undefined') { showToast('Firebase not configured', 'error'); return; }
+  const data = {};
+  ['name','tagline','desc','email','phone','location','founded','linkedin','github','twitter','instagram'].forEach(k => {
+    const el = document.getElementById('ci-' + k);
+    if (el) data[k] = el.value.trim();
+  });
+  document.getElementById('ci-save-txt').style.display = 'none';
+  document.getElementById('ci-spin').style.display = 'inline-block';
+  try {
+    await db.collection('settings').doc('company').set(data, { merge: true });
+    showToast('Company info saved!', 'success');
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  } finally {
+    document.getElementById('ci-save-txt').style.display = 'inline';
+    document.getElementById('ci-spin').style.display = 'none';
+  }
+}
+
+async function loadAdmins() {
+  const el = document.getElementById('admins-list');
+  if (typeof db === 'undefined') { el.innerHTML = '<div class="empty-state"><div>Configure Firebase first</div></div>'; return; }
+  try {
+    const snap = await db.collection('admins').get();
+    if (!snap.size) { el.innerHTML = '<div class="empty-state"><div class="empty-text">No admins found.</div></div>'; return; }
+    el.innerHTML = snap.docs.map(d => {
+      const a = d.data();
+      return `<div class="admin-user-row">
+        <div class="user-avatar">${(a.email||'A')[0].toUpperCase()}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--text)">${a.email || d.id}</div>
+          <div style="font-size:11.5px;color:var(--text-muted)">UID: ${d.id}</div>
+        </div>
+        <span class="badge badge-active">${a.role || 'admin'}</span>
+        <button class="btn btn-sm btn-danger" onclick="removeAdmin('${d.id}')">Remove</button>
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--danger);font-size:13px">Error: ' + e.message + '</div>'; }
+}
+
+async function addAdmin() {
+  const uid   = document.getElementById('new-admin-uid').value.trim();
+  const email = document.getElementById('new-admin-email').value.trim();
+  const name  = document.getElementById('new-admin-name').value.trim();
+  if (!uid || !email) { showToast('UID and email are required', 'error'); return; }
+  if (typeof db === 'undefined') { showToast('Configure Firebase first', 'error'); return; }
+  try {
+    await db.collection('admins').doc(uid).set({ uid, email, name, role: 'admin', permissions: ['all'], createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    showToast('Admin access granted to ' + email, 'success');
+    document.getElementById('new-admin-uid').value = '';
+    document.getElementById('new-admin-email').value = '';
+    document.getElementById('new-admin-name').value = '';
+    loadAdmins();
+  } catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function removeAdmin(uid) {
+  if (uid === auth?.currentUser?.uid) { showToast("You can't remove your own admin access", 'error'); return; }
+  confirmAction('Remove admin access for this user?', async () => {
+    await db.collection('admins').doc(uid).delete();
+    showToast('Admin access removed', 'success');
+    loadAdmins();
+  });
+}
+
+/* ── Seed data ─────────────────────────────────────────────── */
+function seedLog(msg) {
+  const el = document.getElementById('seed-log');
+  el.style.display = 'block';
+  el.textContent += msg + '\n';
+}
+
+async function seedBatch(col, items) {
+  if (typeof db === 'undefined') { showToast('Configure Firebase first', 'error'); return; }
+  const batch = db.batch();
+  items.forEach(item => {
+    const ref = db.collection(col).doc();
+    batch.set(ref, { ...item, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  });
+  await batch.commit();
+  seedLog(`✓ ${items.length} ${col} seeded`);
+}
+
+async function seedServices() {
+  const items = [
+    { title:'Web Development', icon:'🌐', gradient:'linear-gradient(135deg,#6366f1,#a855f7)', description:'Custom web applications built with modern tech stacks. From landing pages to complex SaaS platforms.', features:['Next.js & React','Custom CMS','SEO Optimized','Mobile Responsive'], status:'active', order:1 },
+    { title:'Mobile Applications', icon:'📱', gradient:'linear-gradient(135deg,#00c6ff,#0072ff)', description:'Cross-platform mobile apps for iOS and Android using React Native and Flutter.', features:['React Native','Flutter','App Store Deployment','Push Notifications'], status:'active', order:2 },
+    { title:'AI Solutions', icon:'🤖', gradient:'linear-gradient(135deg,#a855f7,#ec4899)', description:'Custom AI integrations, chatbots, recommendation engines, and predictive analytics.', features:['LLM Integration','Custom ML Models','Chatbots','Data Analysis'], status:'active', order:3 },
+    { title:'Automation', icon:'⚡', gradient:'linear-gradient(135deg,#f59e0b,#ef4444)', description:'Business process automation, workflow optimization, and system integrations.', features:['API Integrations','Workflow Automation','Zapier / n8n','Custom Scripts'], status:'active', order:4 },
+    { title:'Cloud Solutions', icon:'☁️', gradient:'linear-gradient(135deg,#22c55e,#16a34a)', description:'Cloud infrastructure setup, migration, DevOps pipelines, and deployment automation.', features:['AWS / GCP / Azure','CI/CD Pipelines','Docker & Kubernetes','Auto-scaling'], status:'active', order:5 },
+    { title:'UI/UX Design', icon:'🎨', gradient:'linear-gradient(135deg,#ec4899,#a855f7)', description:'User-centered design that converts visitors into customers. Figma prototypes and design systems.', features:['Figma Design','Design Systems','User Research','Prototyping'], status:'active', order:6 },
+    { title:'E-Commerce', icon:'🛠', gradient:'linear-gradient(135deg,#0072ff,#00c6ff)', description:'Complete e-commerce solutions with payment integration, inventory management, and analytics.', features:['Shopify / WooCommerce','Payment Gateway','Inventory System','Analytics'], status:'active', order:7 },
+  ];
+  try { await seedBatch('services', items); showToast('7 services seeded!', 'success'); }
+  catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function seedProjects() {
+  const items = [
+    { title:'Healthcare SaaS Platform', slug:'healthcare-saas', shortDescription:'A complete healthcare management platform for clinics and hospitals.', description:'Built a comprehensive SaaS solution for healthcare providers with patient management, appointments, billing, and telemedicine.', category:'SaaS', technologies:['React','Node.js','PostgreSQL','AWS'], featured:true, status:'published', demoURL:'', githubURL:'' },
+    { title:'E-Commerce Mobile App', slug:'ecommerce-mobile', shortDescription:'Cross-platform shopping app with AR try-on feature.', description:'Built a React Native e-commerce app with augmented reality product visualization, real-time inventory, and seamless checkout.', category:'Mobile', technologies:['React Native','Firebase','Stripe','AR Kit'], featured:true, status:'published', demoURL:'', githubURL:'' },
+    { title:'AI Content Platform', slug:'ai-content-platform', shortDescription:'AI-powered content generation and SEO optimization platform.', description:'Developed an AI platform that generates SEO-optimized content using GPT-4, with automated publishing workflows.', category:'AI', technologies:['Next.js','OpenAI API','Python','Redis'], featured:false, status:'published', demoURL:'', githubURL:'' },
+    { title:'Logistics Automation', slug:'logistics-automation', shortDescription:'End-to-end logistics and fleet management automation.', description:'Automated a logistics company\'s complete workflow — order processing, route optimization, and real-time tracking.', category:'Automation', technologies:['Vue.js','Python','PostgreSQL','Google Maps API'], featured:false, status:'published', demoURL:'', githubURL:'' },
+    { title:'FinTech Web App', slug:'fintech-web', shortDescription:'Investment portfolio tracker with real-time market data.', description:'Built a responsive investment tracking platform with portfolio analytics, live market data, and tax reporting features.', category:'Web', technologies:['React','TypeScript','Django','WebSocket'], featured:true, status:'published', demoURL:'', githubURL:'' },
+  ];
+  try { await seedBatch('projects', items); showToast('5 projects seeded!', 'success'); }
+  catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function seedTestimonials() {
+  const items = [
+    { name:'Rahul Sharma', role:'CEO', company:'TechVentures India', message:'VisionQast delivered our SaaS platform on time and exceeded every expectation. Their attention to detail and communication throughout the project was outstanding.', rating:5, status:'active' },
+    { name:'Priya Patel', role:'Founder', company:'StyleShop', message:'The mobile app they built for us increased our sales by 45% in the first month. Highly professional team with deep technical expertise.', rating:5, status:'active' },
+    { name:'Arjun Mehta', role:'CTO', company:'DataFlow Analytics', message:'We hired VisionQast for our AI integration project. They not only delivered exactly what we needed but also suggested improvements we hadn\'t thought of.', rating:5, status:'active' },
+    { name:'Sneha Kulkarni', role:'Director', company:'HealthFirst Clinic', message:'Our clinic management system transformed how we operate. The team was responsive, knowledgeable, and delivered a polished product.', rating:5, status:'active' },
+  ];
+  try { await seedBatch('testimonials', items); showToast('4 testimonials seeded!', 'success'); }
+  catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function seedBlogs() {
+  const items = [
+    { title:'How We Built a Scalable AI Platform in 6 Weeks', slug:'scalable-ai-platform-6-weeks', author:'VisionQast Team', category:'Engineering', excerpt:'A behind-the-scenes look at how we architected and delivered a production-ready AI platform under tight deadlines.', content:'<h2>The Challenge</h2><p>Our client needed an AI-powered content platform that could handle thousands of users simultaneously...</p>', tags:['AI','Engineering','Next.js','OpenAI'], readTime:8, status:'published' },
+    { title:'Why We Chose Firebase for Startup MVPs', slug:'firebase-for-mvps', author:'VisionQast Team', category:'Tech Stack', excerpt:'Firebase offers unique advantages for early-stage products. Here is our honest assessment after building 20+ projects.', content:'<h2>Introduction</h2><p>When building MVPs for our clients, we often get asked about our backend choices...</p>', tags:['Firebase','Backend','MVP','Startup'], readTime:6, status:'published' },
+    { title:'React Native vs Flutter in 2025: Our Take', slug:'react-native-vs-flutter-2025', author:'VisionQast Team', category:'Mobile', excerpt:'After building production apps with both frameworks, here are the real trade-offs every founder should know.', content:'<h2>The Great Debate</h2><p>Cross-platform mobile development has matured significantly in 2025...</p>', tags:['React Native','Flutter','Mobile','2025'], readTime:10, status:'published' },
+  ];
+  try { await seedBatch('blogs', items); showToast('3 blog posts seeded!', 'success'); }
+  catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function seedAll() {
+  document.getElementById('seed-log').textContent = '';
+  showToast('Seeding data…', 'info');
+  await seedServices();
+  await seedProjects();
+  await seedTestimonials();
+  await seedBlogs();
+  showToast('All sample data seeded! Refresh to see changes.', 'success');
+}
+</script>
+</body>
+</html>

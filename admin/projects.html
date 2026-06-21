@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — VisionQast Admin</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+</head>
+<body>
+
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="admin-header" id="admin-header"></header>
+    <main class="admin-main">
+
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-title">Projects</div>
+          <div class="page-subtitle">Manage your portfolio projects</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Project
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filter-tabs" id="filter-tabs">
+          <button class="filter-tab active" data-filter="all" onclick="setFilter('all',this)">All</button>
+          <button class="filter-tab" data-filter="published" onclick="setFilter('published',this)">Published</button>
+          <button class="filter-tab" data-filter="draft" onclick="setFilter('draft',this)">Draft</button>
+          <button class="filter-tab" data-filter="featured" onclick="setFilter('featured',this)">⭐ Featured</button>
+        </div>
+        <div class="filter-spacer"></div>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search projects…" id="project-search" oninput="filterProjects()" />
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Category</th>
+              <th>Tech</th>
+              <th>Featured</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="projects-body">
+            <tr><td colspan="7"><div class="empty-state"><div class="loading-spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-info" id="projects-count">Loading…</div>
+        <div class="pagination-btns" id="projects-pages"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" id="project-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Add Project</div>
+      <button class="modal-close" onclick="closeModal('project-modal')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:80vh;overflow-y:auto">
+      <input type="hidden" id="project-id" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Title <span class="required">*</span></label>
+          <input type="text" id="proj-title" class="form-control" placeholder="e.g. E-Commerce Platform" oninput="autoSlug()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Slug</label>
+          <input type="text" id="proj-slug" class="form-control" placeholder="auto-generated" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Short Description <span class="required">*</span></label>
+        <input type="text" id="proj-short-desc" class="form-control" placeholder="One-line summary for cards" maxlength="120" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Full Description</label>
+        <textarea id="proj-desc" class="form-control" rows="4" placeholder="Detailed project description…"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category <span class="required">*</span></label>
+          <select id="proj-category" class="form-control">
+            <option value="">Select category</option>
+            <option>Web</option>
+            <option>Mobile</option>
+            <option>AI</option>
+            <option>Automation</option>
+            <option>Ecommerce</option>
+            <option>SaaS</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="proj-status" class="form-control">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Technologies</label>
+        <div class="tags-input-wrap" id="tech-tags-wrap">
+          <input type="text" class="tags-input" placeholder="Type tag + Enter (e.g. React, Node.js)" />
+        </div>
+        <div class="form-hint">Press Enter or comma to add a tag</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Demo URL</label>
+          <input type="url" id="proj-demo" class="form-control" placeholder="https://demo.example.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">GitHub URL</label>
+          <input type="url" id="proj-github" class="form-control" placeholder="https://github.com/…" />
+        </div>
+      </div>
+
+      <!-- Cover Image -->
+      <div class="form-group">
+        <label class="form-label">Cover Image (max 4 MB — stored as compressed Base64)</label>
+        <div class="img-upload-zone">
+          <input type="file" id="proj-img-input" accept="image/*" />
+          <div class="img-upload-icon">🖼</div>
+          <div class="img-upload-text">Click or drag image here</div>
+          <div class="img-upload-hint">JPEG / PNG / WebP — will be compressed to ~100 KB</div>
+          <div class="img-preview-wrap" id="proj-img-preview-wrap" style="display:none">
+            <img id="proj-img-preview" class="img-preview" />
+            <div class="img-preview-remove" onclick="removeProjectImage()">×</div>
+          </div>
+        </div>
+        <input type="hidden" id="proj-img-data" />
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="proj-featured" />
+        <label class="form-check-label" for="proj-featured">⭐ Mark as Featured (shown on homepage)</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('project-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProject()">
+        <span id="save-btn-text">Save Project</span>
+        <span class="loading-spinner" id="save-spinner" style="display:none;width:14px;height:14px"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script src="/assets/js/admin.js"></script>
+<script>
+initAdminLayout('projects', 'Projects', 'Content / Projects');
+
+let allProjects = [];
+let techTags    = [];
+let currentFilter = 'all';
+const PAGE_SIZE = 15;
+let currentPage = 1;
+
+requireAdmin(loadProjects);
+
+/* ── Image upload (single authoritative handler) ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('proj-img-input').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try {
+      const b64 = await compressImage(file, 900, 0.78);
+      document.getElementById('proj-img-data').value = b64;
+      const prev = document.getElementById('proj-img-preview');
+      const wrap = document.getElementById('proj-img-preview-wrap');
+      prev.src = b64;
+      prev.style.display = 'block';
+      wrap.style.display = 'block';
+      showToast('Image ready (' + Math.round((b64.length*3)/4/1024) + ' KB)', 'success');
+    } catch(err) { showToast('Image error: ' + err.message, 'error'); }
+  });
+});
+
+setupTagsInput('tech-tags-wrap', techTags);
+
+async function loadProjects() {
+  if (typeof db === 'undefined') { showToast('Configure Firebase in firebase-config.js', 'warning'); renderProjects([]); return; }
+  try {
+    const snap = await db.collection('projects').orderBy('createdAt', 'desc').get();
+    allProjects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    filterProjects();
+  } catch(e) {
+    showToast('Error loading projects: ' + e.message, 'error');
+    renderProjects([]);
+  }
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentPage = 1;
+  filterProjects();
+}
+
+function filterProjects() {
+  const q = (document.getElementById('project-search')?.value || '').toLowerCase();
+  let items = allProjects;
+  if (currentFilter === 'published') items = items.filter(p => p.status === 'published');
+  else if (currentFilter === 'draft')  items = items.filter(p => p.status === 'draft' || !p.status);
+  else if (currentFilter === 'featured') items = items.filter(p => p.featured);
+  if (q) items = items.filter(p => (p.title || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q));
+  renderProjects(items);
+}
+
+function renderProjects(items) {
+  const tbody = document.getElementById('projects-body');
+  const total = items.length;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page  = items.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('projects-count').textContent = `${total} project${total !== 1 ? 's' : ''}`;
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+      <div class="empty-icon">📁</div>
+      <div class="empty-title">No projects yet</div>
+      <div class="empty-text">Click "Add Project" to publish your first portfolio entry.</div>
+    </div></td></tr>`;
+    document.getElementById('projects-pages').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = page.map(p => `
+    <tr>
+      <td>
+        <div class="td-img">
+          ${p.imageURL
+            ? `<img class="td-thumb" src="${safeUrl(p.imageURL)}" alt="${escapeHtml(p.title)}" />`
+            : `<div class="td-thumb" style="background:linear-gradient(135deg,#6366f133,#a855f733);display:flex;align-items:center;justify-content:center;font-size:16px">📁</div>`
+          }
+          <div>
+            <span class="td-title">${escapeHtml(p.title || '—')}</span>
+            <span class="td-meta">${escapeHtml(p.shortDescription ? p.shortDescription.slice(0, 60) + (p.shortDescription.length > 60 ? '…' : '') : '')}</span>
+          </div>
+        </div>
+      </td>
+      <td>${p.category ? `<span class="badge badge-new">${escapeHtml(p.category)}</span>` : '—'}</td>
+      <td style="max-width:180px">
+        <div style="display:flex;flex-wrap:wrap;gap:3px">
+          ${(p.technologies || []).slice(0,3).map(t => `<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(22,20,46,0.05);color:var(--text-muted)">${escapeHtml(t)}</span>`).join('')}
+          ${(p.technologies || []).length > 3 ? `<span style="font-size:10px;color:var(--text-muted)">+${p.technologies.length-3}</span>` : ''}
+        </div>
+      </td>
+      <td>${p.featured ? '<span style="color:#f59e0b">⭐ Yes</span>' : '<span style="color:var(--text-muted)">—</span>'}</td>
+      <td>${badgeHTML(p.status || 'draft')}</td>
+      <td style="color:var(--text-muted);white-space:nowrap">${formatDate(p.createdAt)}</td>
+      <td>
+        <div class="td-actions">
+          <button class="btn btn-sm btn-secondary" onclick="editProject('${p.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteProject('${p.id}', '${(p.title||'').replace(/'/g,"\\'")}')">Del</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  /* Pagination */
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const pEl   = document.getElementById('projects-pages');
+  if (pages <= 1) { pEl.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+  for (let i=1;i<=pages;i++) html += `<button class="page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+  pEl.innerHTML = html;
+}
+
+function goPage(p) { currentPage = p; filterProjects(); window.scrollTo(0,0); }
+
+/* ── Add / Edit ─── */
+function openAddModal() {
+  document.getElementById('modal-title').textContent = 'Add Project';
+  document.getElementById('project-id').value = '';
+  document.getElementById('proj-title').value = '';
+  document.getElementById('proj-slug').value = '';
+  document.getElementById('proj-short-desc').value = '';
+  document.getElementById('proj-desc').value = '';
+  document.getElementById('proj-category').value = '';
+  document.getElementById('proj-status').value = 'draft';
+  document.getElementById('proj-demo').value = '';
+  document.getElementById('proj-github').value = '';
+  document.getElementById('proj-featured').checked = false;
+  document.getElementById('proj-img-data').value = '';
+  document.getElementById('proj-img-preview').src = '';
+  document.getElementById('proj-img-preview-wrap').style.display = 'none';
+  techTags.length = 0;
+  document.querySelectorAll('#tech-tags-wrap .tag-chip').forEach(c => c.remove());
+  openModal('project-modal');
+}
+
+function editProject(id) {
+  const p = allProjects.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modal-title').textContent = 'Edit Project';
+  document.getElementById('project-id').value = p.id;
+  document.getElementById('proj-title').value = p.title || '';
+  document.getElementById('proj-slug').value = p.slug || '';
+  document.getElementById('proj-short-desc').value = p.shortDescription || '';
+  document.getElementById('proj-desc').value = p.description || '';
+  document.getElementById('proj-category').value = p.category || '';
+  document.getElementById('proj-status').value = p.status || 'draft';
+  document.getElementById('proj-demo').value = p.demoURL || '';
+  document.getElementById('proj-github').value = p.githubURL || '';
+  document.getElementById('proj-featured').checked = !!p.featured;
+  document.getElementById('proj-img-data').value = p.imageURL || '';
+  const prev = document.getElementById('proj-img-preview');
+  const wrap = document.getElementById('proj-img-preview-wrap');
+  if (p.imageURL) { prev.src = p.imageURL; prev.style.display='block'; wrap.style.display='block'; }
+  else { prev.src=''; prev.style.display='none'; wrap.style.display='none'; }
+  techTags.length = 0;
+  (p.technologies || []).forEach(t => techTags.push(t));
+  document.querySelectorAll('#tech-tags-wrap .tag-chip').forEach(c => c.remove());
+  const inp = document.querySelector('#tech-tags-wrap .tags-input');
+  techTags.forEach(t => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${t}<button class="tag-remove" onclick="removeTechTag(this,'${t}')">&times;</button>`;
+    document.getElementById('tech-tags-wrap').insertBefore(chip, inp);
+  });
+  openModal('project-modal');
+}
+
+function removeTechTag(btn, tag) {
+  const i = techTags.indexOf(tag);
+  if (i > -1) techTags.splice(i, 1);
+  btn.parentElement.remove();
+}
+
+function removeProjectImage() {
+  document.getElementById('proj-img-data').value = '';
+  document.getElementById('proj-img-preview').src = '';
+  document.getElementById('proj-img-preview-wrap').style.display = 'none';
+}
+
+function autoSlug() {
+  const title = document.getElementById('proj-title').value;
+  document.getElementById('proj-slug').value = generateSlug(title);
+}
+
+async function saveProject() {
+  const title   = document.getElementById('proj-title').value.trim();
+  const shortD  = document.getElementById('proj-short-desc').value.trim();
+  const cat     = document.getElementById('proj-category').value;
+  if (!title)  { showToast('Title is required', 'error'); return; }
+  if (!shortD) { showToast('Short description is required', 'error'); return; }
+  if (!cat)    { showToast('Please select a category', 'error'); return; }
+  if (typeof db === 'undefined') { showToast('Firebase not configured', 'error'); return; }
+
+  const data = {
+    title,
+    slug:             document.getElementById('proj-slug').value || generateSlug(title),
+    shortDescription: shortD,
+    description:      document.getElementById('proj-desc').value.trim(),
+    category:         cat,
+    status:           document.getElementById('proj-status').value,
+    demoURL:          document.getElementById('proj-demo').value.trim(),
+    githubURL:        document.getElementById('proj-github').value.trim(),
+    featured:         document.getElementById('proj-featured').checked,
+    technologies:     [...techTags],
+    imageURL:         document.getElementById('proj-img-data').value || '',
+  };
+
+  const id = document.getElementById('project-id').value;
+  const btnTxt = document.getElementById('save-btn-text');
+  const spinner = document.getElementById('save-spinner');
+  btnTxt.style.display = 'none'; spinner.style.display = 'inline-block';
+
+  try {
+    if (id) {
+      await fsUpdate('projects', id, data);
+      const idx = allProjects.findIndex(p => p.id === id);
+      if (idx > -1) allProjects[idx] = { id, ...data };
+      showToast('Project updated!', 'success');
+    } else {
+      const ref = await fsAdd('projects', data);
+      allProjects.unshift({ id: ref.id, ...data });
+      showToast('Project added!', 'success');
+    }
+    closeModal('project-modal');
+    filterProjects();
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  } finally {
+    btnTxt.style.display = 'inline'; spinner.style.display = 'none';
+  }
+}
+
+function deleteProject(id, title) {
+  confirmAction(`Delete "<strong>${title}</strong>"? This cannot be undone.`, async () => {
+    if (typeof db === 'undefined') { showToast('Firebase not configured', 'error'); return; }
+    try {
+      await fsDelete('projects', id);
+      allProjects = allProjects.filter(p => p.id !== id);
+      filterProjects();
+      showToast('Project deleted', 'success');
+    } catch(e) { showToast('Delete failed: ' + e.message, 'error'); }
+  });
+}
+</script>
+</body>
+</html>

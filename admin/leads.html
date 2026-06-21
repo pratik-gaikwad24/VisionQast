@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leads CRM — VisionQast Admin</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .crm-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; margin-bottom:1.25rem; }
+    .crm-stat  { background:var(--bg-card); border:1px solid var(--border); border-radius:.75rem; padding:.875rem 1rem; }
+    .crm-stat-val   { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700; color:var(--text); }
+    .crm-stat-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+
+    .lead-detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:.875rem; }
+    .lead-field-label { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:3px; font-weight:600; }
+    .lead-field-value { font-size:13.5px; color:var(--text); }
+    .lead-field-link  { color:var(--accent); text-decoration:none; font-size:13.5px; }
+    .lead-field-link:hover { text-decoration:underline; }
+
+    .notes-area { width:100%; background:var(--bg-input); border:1px solid var(--border); border-radius:.5rem; padding:.625rem .875rem; color:var(--text); font-size:13px; line-height:1.6; resize:vertical; min-height:80px; font-family:inherit; }
+    .notes-area:focus { border-color:var(--border-focus); outline:none; }
+
+    .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:5px; }
+    .dot-new        { background:#3b82f6; }
+    .dot-contacted  { background:#a855f7; }
+    .dot-converted  { background:#22c55e; }
+    .dot-closed     { background:#4a5568; }
+
+    .pipe-bar {
+      display:flex; border-radius:.75rem; overflow:hidden; height:8px;
+      margin-bottom:.25rem;
+    }
+    .pipe-seg { height:100%; transition:width .4s ease; }
+
+    @media(max-width:768px) {
+      .crm-stats { grid-template-columns:repeat(2,1fr); }
+      .lead-detail-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="admin-header" id="admin-header"></header>
+    <main class="admin-main">
+
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-title">Leads / CRM</div>
+          <div class="page-subtitle">Track and manage all customer enquiries</div>
+        </div>
+        <button class="btn btn-secondary" onclick="exportCSV()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+      </div>
+
+      <!-- Pipeline stats -->
+      <div class="crm-stats" id="crm-stats">
+        <div class="crm-stat">
+          <div class="crm-stat-val" id="cs-total">—</div>
+          <div class="crm-stat-label">Total Leads</div>
+        </div>
+        <div class="crm-stat">
+          <div class="crm-stat-val" id="cs-new" style="color:#3b82f6">—</div>
+          <div class="crm-stat-label">New</div>
+        </div>
+        <div class="crm-stat">
+          <div class="crm-stat-val" id="cs-contacted" style="color:#a855f7">—</div>
+          <div class="crm-stat-label">Contacted</div>
+        </div>
+        <div class="crm-stat">
+          <div class="crm-stat-val" id="cs-converted" style="color:#22c55e">—</div>
+          <div class="crm-stat-label">Converted</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-tab" onclick="setFilter('new',this)">🔵 New</button>
+          <button class="filter-tab" onclick="setFilter('contacted',this)">🟣 Contacted</button>
+          <button class="filter-tab" onclick="setFilter('converted',this)">🟢 Converted</button>
+          <button class="filter-tab" onclick="setFilter('closed',this)">⚫ Closed</button>
+        </div>
+        <div class="filter-spacer"></div>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search leads…" oninput="filterLeads()" id="lead-search" />
+        </div>
+        <select class="form-control" id="service-filter" style="width:160px;padding:.375rem .75rem;font-size:13px" onchange="filterLeads()">
+          <option value="">All services</option>
+        </select>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Contact</th>
+              <th>Company</th>
+              <th>Service</th>
+              <th>Budget</th>
+              <th>Status</th>
+              <th>Received</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leads-body">
+            <tr><td colspan="7"><div class="empty-state"><div class="loading-spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-info" id="leads-count">Loading…</div>
+        <div class="pagination-btns" id="leads-pages"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Lead Detail Modal -->
+<div class="modal-overlay" id="lead-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="lead-modal-name">Lead Details</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px" id="lead-modal-time"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('lead-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="lead-detail-grid" id="lead-detail-grid">
+        <!-- Populated by JS -->
+      </div>
+
+      <div style="margin-top:1.25rem">
+        <div class="lead-field-label">Message</div>
+        <div id="lead-message" style="font-size:13.5px;color:var(--text-sec);line-height:1.7;padding:.75rem;background:var(--bg-input);border:1px solid var(--border);border-radius:.5rem;margin-top:.25rem"></div>
+      </div>
+
+      <div style="margin-top:1.25rem">
+        <label class="lead-field-label" style="display:block;margin-bottom:.375rem">Update Status</label>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="updateStatus('new')" style="background:rgba(59,130,246,0.12);color:#3b82f6;border-color:rgba(59,130,246,0.2)">🔵 New</button>
+          <button class="btn btn-sm" onclick="updateStatus('contacted')" style="background:rgba(168,85,247,0.12);color:#a855f7;border-color:rgba(168,85,247,0.2)">🟣 Contacted</button>
+          <button class="btn btn-sm" onclick="updateStatus('converted')" style="background:rgba(34,197,94,0.12);color:#22c55e;border-color:rgba(34,197,94,0.2)">🟢 Converted</button>
+          <button class="btn btn-sm" onclick="updateStatus('closed')" style="background:rgba(74,85,104,0.12);color:#4a5568;border-color:rgba(74,85,104,0.3)">⚫ Close</button>
+        </div>
+      </div>
+
+      <div style="margin-top:1.25rem">
+        <label class="lead-field-label" style="display:block;margin-bottom:.375rem">Internal Notes</label>
+        <textarea class="notes-area" id="lead-notes" placeholder="Add notes about this lead (visible only to admins)…"></textarea>
+        <button class="btn btn-secondary btn-sm" style="margin-top:.5rem" onclick="saveNotes()">Save Notes</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="deleteLead()">Delete Lead</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-secondary" onclick="closeModal('lead-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script src="/assets/js/admin.js"></script>
+<script>
+initAdminLayout('leads', 'Leads / CRM', 'CRM / Leads');
+
+let allLeads = [];
+let currentFilter = 'all';
+let activeLead = null;
+const PAGE_SIZE = 20;
+let currentPage = 1;
+
+requireAdmin(loadLeads);
+
+async function loadLeads() {
+  if (typeof db === 'undefined') { showToast('Configure Firebase', 'warning'); renderLeads([]); return; }
+  try {
+    const snap = await db.collection('contacts').orderBy('createdAt', 'desc').get();
+    allLeads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    updateCRMStats();
+    buildServiceFilter();
+    filterLeads();
+  } catch(e) { showToast('Error: ' + e.message, 'error'); renderLeads([]); }
+}
+
+function updateCRMStats() {
+  const total     = allLeads.length;
+  const newC      = allLeads.filter(l => !l.status || l.status === 'new').length;
+  const contacted = allLeads.filter(l => l.status === 'contacted').length;
+  const converted = allLeads.filter(l => l.status === 'converted').length;
+  document.getElementById('cs-total').textContent     = total;
+  document.getElementById('cs-new').textContent       = newC;
+  document.getElementById('cs-contacted').textContent = contacted;
+  document.getElementById('cs-converted').textContent = converted;
+}
+
+function buildServiceFilter() {
+  const services = [...new Set(allLeads.map(l => l.service).filter(Boolean))];
+  const sel = document.getElementById('service-filter');
+  services.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentPage = 1;
+  filterLeads();
+}
+
+function filterLeads() {
+  const q    = (document.getElementById('lead-search')?.value || '').toLowerCase();
+  const svc  = document.getElementById('service-filter')?.value || '';
+  let items  = [...allLeads];
+  if (currentFilter !== 'all') {
+    items = items.filter(l => (l.status || 'new') === currentFilter);
+  }
+  if (svc)  items = items.filter(l => l.service === svc);
+  if (q)    items = items.filter(l =>
+    (l.name||'').toLowerCase().includes(q) ||
+    (l.email||'').toLowerCase().includes(q) ||
+    (l.company||'').toLowerCase().includes(q)
+  );
+  renderLeads(items);
+}
+
+function renderLeads(items) {
+  const tbody = document.getElementById('leads-body');
+  const total = items.length;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page  = items.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('leads-count').textContent = `${total} lead${total !== 1 ? 's' : ''}`;
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+      <div class="empty-icon">📩</div>
+      <div class="empty-title">No leads found</div>
+      <div class="empty-text">New enquiries from the website will appear here.</div>
+    </div></td></tr>`;
+    document.getElementById('leads-pages').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = page.map(l => {
+    const status = l.status || 'new';
+    return `
+      <tr style="cursor:pointer" onclick="openLead('${escapeHtml(l.id)}')">
+        <td>
+          <div style="display:flex;align-items:center;gap:.75rem">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0">${escapeHtml((l.name||'?')[0].toUpperCase())}</div>
+            <div>
+              <span class="td-title">${escapeHtml(l.name || '—')}</span>
+              <span class="td-meta">${escapeHtml(l.email || '')}</span>
+            </div>
+          </div>
+        </td>
+        <td style="color:var(--text-sec)">${escapeHtml(l.company || '—')}</td>
+        <td style="color:var(--text-sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px">${escapeHtml(l.service || '—')}</td>
+        <td style="color:var(--text-sec)">${l.budget ? '₹' + escapeHtml(l.budget) : '—'}</td>
+        <td>${badgeHTML(status)}</td>
+        <td style="color:var(--text-muted);font-size:12px;white-space:nowrap">${timeAgo(l.createdAt)}</td>
+        <td onclick="event.stopPropagation()">
+          <div class="td-actions">
+            <a href="tel:${safeUrl(l.phone||'')}" class="btn btn-sm btn-secondary" title="Call">📞</a>
+            <a href="mailto:${safeUrl(l.email||'')}" class="btn btn-sm btn-secondary" title="Email">✉</a>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const pEl   = document.getElementById('leads-pages');
+  if (pages <= 1) { pEl.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+  for (let i=1;i<=pages;i++) html += `<button class="page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+  pEl.innerHTML = html;
+}
+
+function goPage(p) { currentPage = p; filterLeads(); window.scrollTo(0,0); }
+
+function openLead(id) {
+  activeLead = allLeads.find(l => l.id === id);
+  if (!activeLead) return;
+  const l = activeLead;
+
+  document.getElementById('lead-modal-name').textContent = l.name || 'Unknown';
+  document.getElementById('lead-modal-time').textContent = 'Received ' + (timeAgo(l.createdAt) || '—');
+
+  document.getElementById('lead-detail-grid').innerHTML = [
+    { label: 'Email',   value: `<a href="mailto:${safeUrl(l.email||'')}" class="lead-field-link">${escapeHtml(l.email || '—')}</a>` },
+    { label: 'Phone',   value: `<a href="tel:${safeUrl(l.phone||'')}" class="lead-field-link">${escapeHtml(l.phone || '—')}</a>` },
+    { label: 'Company', value: escapeHtml(l.company || '—') },
+    { label: 'Service', value: escapeHtml(l.service || '—') },
+    { label: 'Budget',  value: l.budget ? '₹' + escapeHtml(l.budget) : '—' },
+    { label: 'Status',  value: badgeHTML(l.status || 'new') },
+  ].map(f => `
+    <div>
+      <div class="lead-field-label">${f.label}</div>
+      <div class="lead-field-value">${f.value}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('lead-message').textContent = l.message || 'No message provided.';
+  document.getElementById('lead-notes').value = l.notes || '';
+
+  /* Mark as contacted if new */
+  if (!l.status || l.status === 'new') {
+    if (typeof db !== 'undefined') {
+      db.collection('contacts').doc(l.id).update({ status: 'contacted' }).then(() => {
+        l.status = 'contacted';
+        updateCRMStats();
+        filterLeads();
+      }).catch(() => {});
+    }
+  }
+
+  openModal('lead-modal');
+}
+
+async function updateStatus(status) {
+  if (!activeLead || typeof db === 'undefined') return;
+  try {
+    await db.collection('contacts').doc(activeLead.id).update({ status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    activeLead.status = status;
+    const idx = allLeads.findIndex(l => l.id === activeLead.id);
+    if (idx > -1) allLeads[idx].status = status;
+    document.getElementById('lead-detail-grid').querySelector('.lead-field-value:last-child').innerHTML = badgeHTML(status);
+    updateCRMStats();
+    filterLeads();
+    showToast(`Status updated to "${status}"`, 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function saveNotes() {
+  if (!activeLead || typeof db === 'undefined') return;
+  const notes = document.getElementById('lead-notes').value;
+  try {
+    await db.collection('contacts').doc(activeLead.id).update({ notes });
+    activeLead.notes = notes;
+    const idx = allLeads.findIndex(l => l.id === activeLead.id);
+    if (idx > -1) allLeads[idx].notes = notes;
+    showToast('Notes saved', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+function deleteLead() {
+  if (!activeLead) return;
+  confirmAction(`Delete lead from <strong>${activeLead.name}</strong>?`, async () => {
+    try {
+      await fsDelete('contacts', activeLead.id);
+      allLeads = allLeads.filter(l => l.id !== activeLead.id);
+      closeModal('lead-modal');
+      updateCRMStats();
+      filterLeads();
+      showToast('Lead deleted', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
+  });
+}
+
+function exportCSV() {
+  /* Neutralize CSV formula injection (=,+,-,@,tab,CR at start) and
+     escape embedded quotes per RFC 4180. */
+  const cell = (v) => {
+    let s = String(v == null ? '' : v);
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    return '"' + s.replace(/"/g, '""') + '"';
+  };
+  const headers = ['Name','Email','Phone','Company','Service','Budget','Message','Status','Date'];
+  const rows = allLeads.map(l => [
+    l.name||'', l.email||'', l.phone||'', l.company||'',
+    l.service||'', l.budget||'', l.message||'',
+    l.status||'new', formatDate(l.createdAt)
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(cell).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `visionqast-leads-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('CSV downloaded!', 'success');
+}
+</script>
+</body>
+</html>

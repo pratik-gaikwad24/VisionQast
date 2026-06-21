@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Work — VisionQast Portfolio</title>
+  <meta name="description" content="Explore VisionQast's portfolio — web apps, mobile apps, AI platforms, automation, and SaaS products built for startups and enterprises." />
+  <link rel="canonical" href="https://visionqast.com/work.html" />
+  <meta name="theme-color" content="#F5F6FC" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+
+<div id="site-nav"></div>
+
+<main>
+  <!-- ═══ PAGE HERO ═══ -->
+  <section class="page-hero mesh-grid">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="container">
+      <div class="eyebrow" data-reveal>Portfolio</div>
+      <h1 class="page-hero-title" data-reveal data-delay="1">Products We're<br><span class="gradient-text">Proud to Have Built</span></h1>
+      <p class="lead" data-reveal data-delay="2">From early-stage MVPs to enterprise platforms — a selection of work that shows what we can do for you.</p>
+      <div class="crumb" data-reveal data-delay="3"><a href="/index.html">Home</a> / <span>Work</span></div>
+    </div>
+  </section>
+
+  <!-- ═══ PORTFOLIO ═══ -->
+  <section class="section">
+    <div class="container">
+      <div class="filters" data-reveal>
+        <button class="filter active" data-filter="all">All Projects</button>
+        <button class="filter" data-filter="web">Web</button>
+        <button class="filter" data-filter="mobile">Mobile</button>
+        <button class="filter" data-filter="ai">AI</button>
+        <button class="filter" data-filter="automation">Automation</button>
+        <button class="filter" data-filter="saas">SaaS</button>
+      </div>
+      <div class="work-grid" id="work-grid"></div>
+    </div>
+  </section>
+
+  <!-- ═══ STATS ═══ -->
+  <section class="section-sm bg-alt">
+    <div class="container">
+      <div class="stat-band">
+        <div class="stat-cell" data-reveal><div class="stat-num gradient-text" data-count="50" data-suffix="+">0</div><div class="stat-cap">Projects Shipped</div></div>
+        <div class="stat-cell" data-reveal data-delay="1"><div class="stat-num gradient-text" data-count="12" data-suffix="+">0</div><div class="stat-cap">Industries Served</div></div>
+        <div class="stat-cell" data-reveal data-delay="2"><div class="stat-num gradient-text" data-count="4" data-suffix="">0</div><div class="stat-cap">Countries</div></div>
+        <div class="stat-cell" data-reveal data-delay="3"><div class="stat-num gradient-text" data-count="99" data-suffix="%">0</div><div class="stat-cap">On-Time Delivery</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="cta-band" data-reveal>
+        <h2>Your Project Could Be Next</h2>
+        <p>Let's talk about what you want to build. We'll show you exactly how we'd approach it.</p>
+        <div class="cta-actions">
+          <a href="/contact.html" class="btn btn-light btn-lg">Discuss Your Project →</a>
+          <a href="/services.html" class="btn btn-outline-light btn-lg">Our Services</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script src="/assets/js/layout.js"></script>
+<script src="/assets/js/script.js"></script>
+</body>
+</html>

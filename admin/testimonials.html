@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Testimonials — VisionQast Admin</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .testimonials-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem; }
+    .test-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg);
+      padding:1.25rem; transition:var(--transition); position:relative;
+    }
+    .test-card:hover { border-color:rgba(22,20,46,0.1); }
+    .test-avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid rgba(99,102,241,0.3); }
+    .test-avatar-placeholder { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#a855f7); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; color:white; }
+    .test-name    { font-size:14px; font-weight:700; color:var(--text); margin-bottom:2px; }
+    .test-role    { font-size:12px; color:var(--text-muted); }
+    .test-message { font-size:13px; color:var(--text-sec); line-height:1.6; margin:1rem 0; font-style:italic; }
+    .test-actions { display:flex; gap:.5rem; margin-top:1rem; }
+    .rating-input { display:flex; gap:4px; }
+    .rating-star  { font-size:24px; cursor:pointer; color:var(--text-muted); transition:var(--transition); }
+    .rating-star.active, .rating-star:hover ~ .rating-star, .rating-star:hover { color:#f59e0b; }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="admin-header" id="admin-header"></header>
+    <main class="admin-main">
+
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-title">Testimonials</div>
+          <div class="page-subtitle">Manage client reviews displayed on the website</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Testimonial
+        </button>
+      </div>
+
+      <div class="filters-bar">
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-tab" onclick="setFilter('active',this)">Active</button>
+          <button class="filter-tab" onclick="setFilter('inactive',this)">Hidden</button>
+        </div>
+        <div class="filter-spacer"></div>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search…" oninput="filterTestimonials()" id="test-search" />
+        </div>
+      </div>
+
+      <div class="testimonials-grid" id="testimonials-grid">
+        <div style="grid-column:1/-1"><div class="empty-state"><div class="loading-spinner"></div></div></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" id="test-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="test-modal-title">Add Testimonial</div>
+      <button class="modal-close" onclick="closeModal('test-modal')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:80vh;overflow-y:auto">
+      <input type="hidden" id="test-id" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Client Name <span class="required">*</span></label>
+          <input type="text" id="test-name" class="form-control" placeholder="e.g. Rahul Sharma" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="test-status" class="form-control">
+            <option value="active">Active (Visible)</option>
+            <option value="inactive">Hidden</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Role / Position</label>
+          <input type="text" id="test-role" class="form-control" placeholder="e.g. CEO" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company</label>
+          <input type="text" id="test-company" class="form-control" placeholder="e.g. TechCorp Pvt Ltd" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Rating</label>
+        <div class="rating-input" id="star-rating">
+          <span class="rating-star" data-val="1" onclick="setRating(1)">★</span>
+          <span class="rating-star" data-val="2" onclick="setRating(2)">★</span>
+          <span class="rating-star" data-val="3" onclick="setRating(3)">★</span>
+          <span class="rating-star" data-val="4" onclick="setRating(4)">★</span>
+          <span class="rating-star" data-val="5" onclick="setRating(5)">★</span>
+        </div>
+        <input type="hidden" id="test-rating" value="5" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Testimonial Message <span class="required">*</span></label>
+        <textarea id="test-message" class="form-control" rows="4" placeholder="Client's review or testimonial…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Profile Photo (optional — stored as Base64)</label>
+        <div class="img-upload-zone">
+          <input type="file" id="test-img-input" accept="image/*" />
+          <div style="display:flex;align-items:center;gap:1rem">
+            <div id="test-avatar-preview" class="test-avatar-placeholder">?</div>
+            <div>
+              <div class="img-upload-text">Click to upload photo</div>
+              <div class="img-upload-hint">Square image recommended — will be compressed</div>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="test-img-data" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('test-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTestimonial()">
+        <span id="test-save-txt">Save</span>
+        <span class="loading-spinner" id="test-save-spin" style="display:none;width:14px;height:14px"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="/assets/js/firebase-config.js"></script>
+<script src="/assets/js/admin.js"></script>
+<script>
+initAdminLayout('testimonials', 'Testimonials', 'Content / Testimonials');
+
+let allTestimonials = [];
+let currentFilter   = 'all';
+let currentRating   = 5;
+
+requireAdmin(loadTestimonials);
+
+/* Star rating UI */
+setRating(5);
+document.getElementById('star-rating').querySelectorAll('.rating-star').forEach(star => {
+  star.addEventListener('mouseenter', () => highlightStars(+star.dataset.val));
+  star.addEventListener('mouseleave', () => highlightStars(currentRating));
+});
+
+function setRating(val) {
+  currentRating = val;
+  document.getElementById('test-rating').value = val;
+  highlightStars(val);
+}
+
+function highlightStars(val) {
+  document.querySelectorAll('.rating-star').forEach(s => {
+    s.classList.toggle('active', +s.dataset.val <= val);
+  });
+}
+
+/* Image upload */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('test-img-input').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try {
+      const b64 = await compressImage(file, 300, 0.85);
+      document.getElementById('test-img-data').value = b64;
+      const prev = document.getElementById('test-avatar-preview');
+      prev.innerHTML = `<img src="${b64}" class="test-avatar" style="width:48px;height:48px" />`;
+      showToast('Photo ready', 'success');
+    } catch(err) { showToast(err.message, 'error'); }
+  });
+});
+
+async function loadTestimonials() {
+  if (typeof db === 'undefined') { showToast('Configure Firebase', 'warning'); renderTestimonials([]); return; }
+  try {
+    const snap = await db.collection('testimonials').orderBy('createdAt', 'desc').get();
+    allTestimonials = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    filterTestimonials();
+  } catch(e) { showToast('Error: ' + e.message, 'error'); renderTestimonials([]); }
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  filterTestimonials();
+}
+
+function filterTestimonials() {
+  const q = (document.getElementById('test-search')?.value || '').toLowerCase();
+  let items = [...allTestimonials];
+  if (currentFilter === 'active')   items = items.filter(t => t.status === 'active' || !t.status);
+  if (currentFilter === 'inactive') items = items.filter(t => t.status === 'inactive');
+  if (q) items = items.filter(t =>
+    (t.name||'').toLowerCase().includes(q) ||
+    (t.company||'').toLowerCase().includes(q)
+  );
+  renderTestimonials(items);
+}
+
+function renderTestimonials(items) {
+  const grid = document.getElementById('testimonials-grid');
+  if (!items.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1"><div class="empty-state">
+      <div class="empty-icon">💬</div>
+      <div class="empty-title">No testimonials yet</div>
+      <div class="empty-text">Add client reviews to display on the website.</div>
+    </div></div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(t => {
+    const avatarHTML = t.profileImage
+      ? `<img class="test-avatar" src="${safeUrl(t.profileImage)}" alt="${escapeHtml(t.name)}" />`
+      : `<div class="test-avatar-placeholder" style="font-size:16px">${escapeHtml((t.name||'?')[0].toUpperCase())}</div>`;
+
+    const stars = Array.from({length: 5}, (_,i) =>
+      `<span style="color:${i < (t.rating||5) ? '#f59e0b' : 'var(--text-muted)'}">★</span>`
+    ).join('');
+
+    return `
+      <div class="test-card">
+        <div style="position:absolute;top:1rem;right:1rem">${badgeHTML(t.status||'active')}</div>
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
+          ${avatarHTML}
+          <div>
+            <div class="test-name">${escapeHtml(t.name || '—')}</div>
+            <div class="test-role">${escapeHtml([t.role, t.company].filter(Boolean).join(' · ') || '—')}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:2px;margin-bottom:.75rem">${stars}</div>
+        <div class="test-message">"${escapeHtml((t.message || '').slice(0, 160))}${(t.message||'').length > 160 ? '…' : ''}"</div>
+        <div class="test-actions">
+          <button class="btn btn-sm btn-secondary" style="flex:1;justify-content:center" onclick="editTestimonial('${t.id}')">Edit</button>
+          ${t.status === 'inactive'
+            ? `<button class="btn btn-sm btn-success" onclick="toggleStatus('${t.id}','active')">Show</button>`
+            : `<button class="btn btn-sm btn-ghost" onclick="toggleStatus('${t.id}','inactive')">Hide</button>`
+          }
+          <button class="btn btn-sm btn-danger" onclick="deleteTestimonial('${t.id}','${(t.name||'').replace(/'/g,"\\'")}')">Del</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openAddModal() {
+  document.getElementById('test-modal-title').textContent = 'Add Testimonial';
+  document.getElementById('test-id').value = '';
+  document.getElementById('test-name').value = '';
+  document.getElementById('test-role').value = '';
+  document.getElementById('test-company').value = '';
+  document.getElementById('test-message').value = '';
+  document.getElementById('test-status').value = 'active';
+  document.getElementById('test-img-data').value = '';
+  document.getElementById('test-avatar-preview').innerHTML = '?';
+  document.getElementById('test-avatar-preview').className = 'test-avatar-placeholder';
+  setRating(5);
+  openModal('test-modal');
+}
+
+function editTestimonial(id) {
+  const t = allTestimonials.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('test-modal-title').textContent = 'Edit Testimonial';
+  document.getElementById('test-id').value = t.id;
+  document.getElementById('test-name').value = t.name || '';
+  document.getElementById('test-role').value = t.role || '';
+  document.getElementById('test-company').value = t.company || '';
+  document.getElementById('test-message').value = t.message || '';
+  document.getElementById('test-status').value = t.status || 'active';
+  document.getElementById('test-img-data').value = t.profileImage || '';
+  const prev = document.getElementById('test-avatar-preview');
+  if (t.profileImage) {
+    prev.innerHTML = `<img src="${t.profileImage}" class="test-avatar" style="width:48px;height:48px" />`;
+    prev.className = '';
+  } else {
+    prev.textContent = (t.name||'?')[0].toUpperCase();
+    prev.className = 'test-avatar-placeholder';
+  }
+  setRating(t.rating || 5);
+  openModal('test-modal');
+}
+
+async function saveTestimonial() {
+  const name = document.getElementById('test-name').value.trim();
+  const msg  = document.getElementById('test-message').value.trim();
+  if (!name) { showToast('Name is required', 'error'); return; }
+  if (!msg)  { showToast('Message is required', 'error'); return; }
+  if (typeof db === 'undefined') { showToast('Firebase not configured', 'error'); return; }
+
+  const data = {
+    name,
+    role:         document.getElementById('test-role').value.trim(),
+    company:      document.getElementById('test-company').value.trim(),
+    message:      msg,
+    rating:       currentRating,
+    status:       document.getElementById('test-status').value,
+    profileImage: document.getElementById('test-img-data').value || '',
+  };
+
+  const id = document.getElementById('test-id').value;
+  document.getElementById('test-save-txt').style.display = 'none';
+  document.getElementById('test-save-spin').style.display = 'inline-block';
+
+  try {
+    if (id) {
+      await fsUpdate('testimonials', id, data);
+      const idx = allTestimonials.findIndex(t => t.id === id);
+      if (idx > -1) allTestimonials[idx] = { id, ...data };
+      showToast('Testimonial updated!', 'success');
+    } else {
+      const ref = await fsAdd('testimonials', data);
+      allTestimonials.unshift({ id: ref.id, ...data });
+      showToast('Testimonial added!', 'success');
+    }
+    closeModal('test-modal');
+    filterTestimonials();
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  } finally {
+    document.getElementById('test-save-txt').style.display = 'inline';
+    document.getElementById('test-save-spin').style.display = 'none';
+  }
+}
+
+async function toggleStatus(id, status) {
+  if (typeof db === 'undefined') return;
+  try {
+    await fsUpdate('testimonials', id, { status });
+    const idx = allTestimonials.findIndex(t => t.id === id);
+    if (idx > -1) allTestimonials[idx].status = status;
+    filterTestimonials();
+    showToast(status === 'active' ? 'Testimonial visible on website' : 'Testimonial hidden', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+function deleteTestimonial(id, name) {
+  confirmAction(`Delete testimonial from <strong>${name}</strong>?`, async () => {
+    try {
+      await fsDelete('testimonials', id);
+      allTestimonials = allTestimonials.filter(t => t.id !== id);
+      filterTestimonials();
+      showToast('Deleted', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
+  });
+}
+</script>
+</body>
+</html>
