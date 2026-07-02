@@ -60,62 +60,62 @@ const REAL_PROJECTS = [
   { title:'VisionQast', category:'SaaS', featured:true,
     shortDescription:'Our own multi-page agency platform with a full admin CMS/CRM dashboard, leads pipeline, and Firebase-powered content management.',
     technologies:['JavaScript','Firebase','CMS/CRM','Responsive'],
-    demoURL:'https://visionqast.com', githubURL:'https://github.com/pratik-gaikwad24/VisionQast' },
+    demoURL:'https://visionqast.com' },
 
   { title:'Kardile Buro Nursing Home', category:'Web', featured:true,
     shortDescription:'A nursing-home & training institute site with Firebase live data, dynamic courses and gallery, branding, and community links.',
     technologies:['JavaScript','Firebase','Dynamic CMS','Responsive'],
-    demoURL:'https://ysinstitutes.com', githubURL:'https://github.com/Dspgithubnow/kardile-buro-nursing-home' },
+    demoURL:'https://ysinstitutes.com' },
 
   { title:'The Rising Star School', category:'Web', featured:true,
     shortDescription:'A vibrant school website featuring an announcement slider, programs, gallery, and a complete mobile-responsive overhaul.',
     technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://the-rising-star-school.vercel.app', githubURL:'https://github.com/pratik-gaikwad24/The-_Rising_Star_School' },
+    demoURL:'https://the-rising-star-school.vercel.app' },
 
   { title:'The Family Dental', category:'Web', featured:true,
     shortDescription:'SEO-optimised dental practice site for Dr. Swapnil Bade with structured-data schemas, ratings, and an image gallery.',
     technologies:['HTML5','CSS3','SEO','Schema.org'],
-    demoURL:'https://drswapnilbade.com', githubURL:'https://github.com/pratik-gaikwad24/The_Family_Dental' },
+    demoURL:'https://drswapnilbade.com' },
 
   { title:'Robotics Studio', category:'Web', featured:false,
     shortDescription:'An engaging robotics & STEM education studio website presenting courses, programs, and student projects.',
     technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://roboticsstudio.in', githubURL:'https://github.com/Dspgithubnow/Robotics_Studio' },
+    demoURL:'https://roboticsstudio.in' },
 
   { title:'Gajanan Laboratory', category:'Web', featured:false,
     shortDescription:'A pathology laboratory website with a full test catalog and a WhatsApp-based test enquiry flow.',
     technologies:['HTML5','CSS3','JavaScript','WhatsApp API'],
-    demoURL:'https://gajanan-laboratory-website.vercel.app', githubURL:'https://github.com/Dspgithubnow/gajanan-laboratory-website' },
+    demoURL:'https://gajanan-laboratory-website.vercel.app' },
 
   { title:'NIDA Pathology Lab', category:'Web', featured:false,
     shortDescription:'Multi-branch pathology lab website with test catalog, branch cards, working hours, and online enquiry.',
     technologies:['HTML5','CSS3','JavaScript','SEO'],
-    demoURL:'https://nidapathologylab.in', githubURL:'https://github.com/Dspgithubnow/NIDA_Pathology_Lab' },
+    demoURL:'https://nidapathologylab.in' },
 
   { title:'Shree Pathology Lab', category:'Web', featured:false,
     shortDescription:'A pathology lab site featuring health packages, transparent pricing, and easy contact for bookings.',
     technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://shreepathlab.com', githubURL:'https://github.com/Dspgithubnow/Shree_Pathology_lab' },
+    demoURL:'https://shreepathlab.com' },
 
   { title:'Ashoka Labs', category:'Web', featured:false,
     shortDescription:'A diagnostic lab website with an optimised gallery and clear service presentation for patients.',
     technologies:['HTML5','CSS3','JavaScript','SEO'],
-    demoURL:'https://ashokalab.in', githubURL:'https://github.com/Dspgithubnow/AshokaLabs' },
+    demoURL:'https://ashokalab.in' },
 
   { title:'Be Well Clinic', category:'Web', featured:false,
     shortDescription:'A clean, trust-building website for a multi-speciality clinic with services, appointment enquiry, and responsive layouts.',
     technologies:['HTML5','CSS3','JavaScript','Vercel'],
-    demoURL:'https://be-well-clinic.vercel.app', githubURL:'https://github.com/pratik-gaikwad24/BeWell_clinic' },
+    demoURL:'https://be-well-clinic.vercel.app' },
 
   { title:'S4S Coatings', category:'Web', featured:false,
     shortDescription:'A bold industrial brand site for a coatings manufacturer showcasing products, capabilities, and enquiries.',
     technologies:['HTML5','CSS3','JavaScript','Vercel'],
-    demoURL:'https://s4s-coatings.vercel.app', githubURL:'https://github.com/Dspgithubnow/S4S_Coatings' },
+    demoURL:'https://s4s-coatings.vercel.app' },
 
   { title:'AP Copiers', category:'Web', featured:false,
     shortDescription:'Business website for a copier & printing solutions company, with a PWA favicon/manifest and branded tab identity.',
     technologies:['HTML5','CSS3','PWA','SEO'],
-    demoURL:'https://apcopiers.in', githubURL:'https://github.com/pratik-gaikwad24/AP_copies' },
+    demoURL:'https://apcopiers.in' },
 ];
 
 function slugify(s){return String(s).toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/[\s_]+/g,'-').replace(/-+/g,'-');}
@@ -184,7 +184,7 @@ async function runSeed(){
         category: p.category,
         status: 'published',
         demoURL: p.demoURL,
-        githubURL: p.githubURL,
+        githubURL: p.githubURL || '',
         featured: !!p.featured,
         technologies: p.technologies,
         imageURL: '',
