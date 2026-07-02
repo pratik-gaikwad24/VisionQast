@@ -164,7 +164,7 @@ const STATIC_WORK = [
   { title:'Kardile Buro Nursing Home', category:'Web', featured:true,
     shortDescription:'A nursing-home & training institute site with Firebase live data, dynamic courses and gallery, branding, and community links.',
     technologies:['JavaScript','Firebase','Dynamic CMS','Responsive'],
-    githubURL:'https://github.com/Dspgithubnow/kardile-buro-nursing-home' },
+    demoURL:'https://ysinstitutes.com', githubURL:'https://github.com/Dspgithubnow/kardile-buro-nursing-home' },
 
   { title:'The Rising Star School', category:'Web', featured:true,
     shortDescription:'A vibrant school website featuring an announcement slider, programs, gallery, and a complete mobile-responsive overhaul.',

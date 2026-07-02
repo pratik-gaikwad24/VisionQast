@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Block access to non-public resources
-Disallow: /icons/
+Disallow: /admin/
 Disallow: /.htaccess
 
 # Crawl-delay for polite bots

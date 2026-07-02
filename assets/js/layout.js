@@ -12,11 +12,7 @@ const NAV_ITEMS = [
   { label: 'Contact',  href: '/contact.html',  match: ['/contact.html'] },
 ];
 
-const BRAND_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-  <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" fill-opacity="0.95"/>
-  <path d="M2 17l10 5 10-5" stroke="white" stroke-width="2" stroke-opacity="0.55"/>
-  <path d="M2 12l10 5 10-5" stroke="white" stroke-width="2"/>
-</svg>`;
+const BRAND_LOGO = `<img class="brand-logo" src="/assets/images/logo-mark.png" alt="" width="34" height="34" />`;
 
 function currentPath() {
   let p = window.location.pathname;
@@ -39,7 +35,7 @@ function buildNav() {
   <header id="nav">
     <div class="nav-in">
       <a href="/index.html" class="brand" aria-label="VisionQast home">
-        <span class="brand-mark">${BRAND_SVG}</span>
+        ${BRAND_LOGO}
         Vision<span class="gradient-text">Qast</span>
       </a>
       <nav class="nav-links" aria-label="Primary">${links}</nav>
@@ -68,7 +64,7 @@ function buildFooter() {
       <div class="footer-top">
         <div>
           <div class="footer-brand">
-            <span class="brand-mark" style="width:30px;height:30px;border-radius:9px">${BRAND_SVG}</span>
+            <img class="brand-logo brand-logo-footer" src="/assets/images/logo-mark.png" alt="" width="30" height="30" />
             Vision<span class="gradient-text">Qast</span>
           </div>
           <p class="footer-desc">Transforming ideas into powerful digital experiences through innovative engineering and creative excellence. Proudly built in Pune, India 🇮🇳</p>
