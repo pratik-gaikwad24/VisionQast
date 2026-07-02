@@ -92,10 +92,10 @@ function buildFooter() {
         <div class="footer-col">
           <h5>Services</h5>
           <a href="/services.html">Web Development</a>
-          <a href="/services.html">Mobile Apps</a>
-          <a href="/services.html">AI Solutions</a>
-          <a href="/services.html">Cloud & DevOps</a>
-          <a href="/services.html">UI/UX Design</a>
+          <a href="/services.html">Software Development</a>
+          <a href="/services.html">Digital Marketing</a>
+          <a href="/services.html">Meta Ads</a>
+          <a href="/services.html">SEO & Maintenance</a>
         </div>
 
         <div class="footer-col footer-news">

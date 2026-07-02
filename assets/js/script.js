@@ -23,7 +23,7 @@ function reveal(scope) {
 (function typing() {
   const el = document.getElementById('type');
   if (!el) return;
-  const words = ['Digital Products', 'AI Platforms', 'Web Applications', 'Mobile Apps', 'Cloud Systems', 'Scalable SaaS'];
+  const words = ['Websites', 'Web Applications', 'Custom Software', 'Digital Marketing', 'Meta Ad Campaigns', 'Google Rankings'];
   let w = 0, c = 0, del = false;
   (function tick() {
     const word = words[w];
@@ -87,14 +87,12 @@ async function loadServices() {
 }
 
 const STATIC_SERVICES = [
-  { icon:'🌐', title:'Web Development',    gradient:'linear-gradient(135deg,#6C5CE7,#9333EA)', description:'Blazing-fast web apps and SaaS platforms built with modern frameworks and pixel-perfect design.', features:['Next.js','React','Custom CMS','SEO'] },
-  { icon:'📱', title:'Mobile Applications',gradient:'linear-gradient(135deg,#06B6D4,#6C5CE7)', description:'Native-quality cross-platform iOS & Android apps with smooth, delightful user experiences.', features:['React Native','Flutter','App Store','Push'] },
-  { icon:'🤖', title:'AI Solutions',       gradient:'linear-gradient(135deg,#C026D3,#F43F5E)', description:'Custom AI integrations, intelligent chatbots, and predictive analytics that give you an edge.', features:['LLMs','Chatbots','NLP','Vision'] },
-  { icon:'⚡', title:'Automation',         gradient:'linear-gradient(135deg,#F59E0B,#F43F5E)', description:'Eliminate repetitive work with smart workflow automation and seamless system integrations.', features:['Workflows','APIs','Zapier','Scripts'] },
-  { icon:'☁️', title:'Cloud & DevOps',     gradient:'linear-gradient(135deg,#10B981,#06B6D4)', description:'Scalable cloud architecture, CI/CD pipelines, and rock-solid infrastructure automation.', features:['AWS','GCP','Docker','K8s'] },
-  { icon:'🎨', title:'UI/UX Design',       gradient:'linear-gradient(135deg,#8B5CF6,#C026D3)', description:'Research-driven, conversion-focused design systems that turn visitors into loyal customers.', features:['Figma','Design Systems','Prototyping'] },
-  { icon:'🛒', title:'E-Commerce',         gradient:'linear-gradient(135deg,#6C5CE7,#06B6D4)', description:'Complete online stores with payments, inventory, and analytics that drive real revenue.', features:['Shopify','Payments','Analytics'] },
-  { icon:'🚀', title:'Digital Products',   gradient:'linear-gradient(135deg,#F59E0B,#10B981)', description:'End-to-end product development — from MVP to market-ready, scalable SaaS platforms.', features:['MVP','Strategy','Scale','Launch'] },
+  { icon:'🌐', title:'Web Development',                 gradient:'linear-gradient(135deg,#6C5CE7,#9333EA)', description:'Fast, modern, mobile-first websites and web applications — business sites, e-commerce, portals, and custom CMS builds that convert visitors into customers.', features:['Business Websites','E-Commerce','Custom CMS','Responsive'] },
+  { icon:'💻', title:'Software Development',            gradient:'linear-gradient(135deg,#06B6D4,#6C5CE7)', description:'Custom software built around your workflow — admin dashboards, CRM & booking systems, billing tools, and internal apps that remove manual work.', features:['Custom Software','CRM & Dashboards','Booking Systems','APIs'] },
+  { icon:'📈', title:'Digital Marketing',               gradient:'linear-gradient(135deg,#C026D3,#F43F5E)', description:'Complete digital marketing that grows your brand — social media management, content strategy, campaigns, and analytics-driven growth.', features:['Social Media','Content Strategy','Campaigns','Analytics'] },
+  { icon:'🎯', title:'Meta Ads (Facebook & Instagram)', gradient:'linear-gradient(135deg,#F59E0B,#F43F5E)', description:'High-converting Meta ad campaigns — precise audience targeting, creatives, A/B testing, and continuous optimisation for maximum return on ad spend.', features:['Facebook Ads','Instagram Ads','Retargeting','ROAS Focus'] },
+  { icon:'🔍', title:'SEO & Google Visibility',         gradient:'linear-gradient(135deg,#10B981,#06B6D4)', description:'Get found on Google — technical SEO, on-page optimisation, local SEO, and Google Business Profile management that brings steady organic enquiries.', features:['On-Page SEO','Local SEO','Google Business','Schema'] },
+  { icon:'🛠️', title:'Website Maintenance & Support',   gradient:'linear-gradient(135deg,#8B5CF6,#C026D3)', description:'Keep your website fast, secure, and up to date — hosting management, content updates, backups, security, and priority support when you need it.', features:['Hosting','Updates','Security','Priority Support'] },
 ];
 
 /* ── Portfolio ──────────────────────────────────────────────── */
@@ -166,7 +164,7 @@ const STATIC_WORK = [
   { title:'Kardile Buro Nursing Home', category:'Web', featured:true,
     shortDescription:'A nursing-home & training institute site with Firebase live data, dynamic courses and gallery, branding, and community links.',
     technologies:['JavaScript','Firebase','Dynamic CMS','Responsive'],
-    demoURL:'https://kardile-buro-nursing-home.vercel.app', githubURL:'https://github.com/Dspgithubnow/kardile-buro-nursing-home' },
+    githubURL:'https://github.com/Dspgithubnow/kardile-buro-nursing-home' },
 
   { title:'The Rising Star School', category:'Web', featured:true,
     shortDescription:'A vibrant school website featuring an announcement slider, programs, gallery, and a complete mobile-responsive overhaul.',
