@@ -6,12 +6,12 @@
 
 /* Gradients reused for fallback icons / placeholders */
 const GRADS = [
-  'linear-gradient(135deg,#6C5CE7,#9333EA)',
-  'linear-gradient(135deg,#06B6D4,#6C5CE7)',
-  'linear-gradient(135deg,#C026D3,#F43F5E)',
+  'linear-gradient(135deg,#F85000,#FF7A2F)',
+  'linear-gradient(135deg,#06B6D4,#F85000)',
+  'linear-gradient(135deg,#C2410C,#F43F5E)',
   'linear-gradient(135deg,#F59E0B,#F43F5E)',
   'linear-gradient(135deg,#10B981,#06B6D4)',
-  'linear-gradient(135deg,#8B5CF6,#C026D3)',
+  'linear-gradient(135deg,#FB923C,#C2410C)',
 ];
 
 function reveal(scope) {
@@ -23,7 +23,7 @@ function reveal(scope) {
 (function typing() {
   const el = document.getElementById('type');
   if (!el) return;
-  const words = ['Websites', 'Web Applications', 'Custom Software', 'Digital Marketing', 'Meta Ad Campaigns', 'Google Rankings'];
+  const words = ['Websites', 'Custom Software', 'Meta Ad Campaigns', 'Google Ads', 'LinkedIn Growth', 'Google Rankings', 'AI Search Visibility'];
   let w = 0, c = 0, del = false;
   (function tick() {
     const word = words[w];
@@ -87,30 +87,39 @@ async function loadServices() {
 }
 
 const STATIC_SERVICES = [
-  { icon:'🌐', title:'Web Development',                 gradient:'linear-gradient(135deg,#6C5CE7,#9333EA)', description:'Fast, modern, mobile-first websites and web applications — business sites, e-commerce, portals, and custom CMS builds that convert visitors into customers.', features:['Business Websites','E-Commerce','Custom CMS','Responsive'] },
-  { icon:'💻', title:'Software Development',            gradient:'linear-gradient(135deg,#06B6D4,#6C5CE7)', description:'Custom software built around your workflow — admin dashboards, CRM & booking systems, billing tools, and internal apps that remove manual work.', features:['Custom Software','CRM & Dashboards','Booking Systems','APIs'] },
-  { icon:'📈', title:'Digital Marketing',               gradient:'linear-gradient(135deg,#C026D3,#F43F5E)', description:'Complete digital marketing that grows your brand — social media management, content strategy, campaigns, and analytics-driven growth.', features:['Social Media','Content Strategy','Campaigns','Analytics'] },
+  { icon:'🌐', title:'Web Development',                 gradient:'linear-gradient(135deg,#F85000,#FF7A2F)', description:'Fast, modern, mobile-first websites and web applications — business sites, e-commerce, portals, and custom CMS builds that convert visitors into customers.', features:['Business Websites','E-Commerce','Custom CMS','Responsive'] },
+  { icon:'💻', title:'Software Development',            gradient:'linear-gradient(135deg,#06B6D4,#F85000)', description:'Custom software built around your workflow — admin dashboards, CRM & booking systems, billing tools, and internal apps that remove manual work.', features:['Custom Software','CRM & Dashboards','Booking Systems','APIs'] },
+  { icon:'📈', title:'Digital Marketing',               gradient:'linear-gradient(135deg,#C2410C,#F43F5E)', description:'Complete digital marketing that grows your brand — social media management, content strategy, campaigns, and analytics-driven growth.', features:['Social Media','Content Strategy','Campaigns','Analytics'] },
   { icon:'🎯', title:'Meta Ads (Facebook & Instagram)', gradient:'linear-gradient(135deg,#F59E0B,#F43F5E)', description:'High-converting Meta ad campaigns — precise audience targeting, creatives, A/B testing, and continuous optimisation for maximum return on ad spend.', features:['Facebook Ads','Instagram Ads','Retargeting','ROAS Focus'] },
   { icon:'🔍', title:'SEO & Google Visibility',         gradient:'linear-gradient(135deg,#10B981,#06B6D4)', description:'Get found on Google — technical SEO, on-page optimisation, local SEO, and Google Business Profile management that brings steady organic enquiries.', features:['On-Page SEO','Local SEO','Google Business','Schema'] },
-  { icon:'🛠️', title:'Website Maintenance & Support',   gradient:'linear-gradient(135deg,#8B5CF6,#C026D3)', description:'Keep your website fast, secure, and up to date — hosting management, content updates, backups, security, and priority support when you need it.', features:['Hosting','Updates','Security','Priority Support'] },
+  { icon:'🛠️', title:'Website Maintenance & Support',   gradient:'linear-gradient(135deg,#FB923C,#C2410C)', description:'Keep your website fast, secure, and up to date — hosting management, content updates, backups, security, and priority support when you need it.', features:['Hosting','Updates','Security','Priority Support'] },
 ];
 
 /* ── Portfolio ──────────────────────────────────────────────── */
+/* Real client projects live in STATIC_WORK (always shown). Anything else
+   published from /admin/ is appended; duplicates are matched by title or
+   domain so a project never shows twice. */
 let WORK_ITEMS = [];
+const normTitle = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
+
 async function loadWork() {
   const grid = document.getElementById('work-grid');
   if (!grid) return;
 
-  let items = [];
+  let extra = [];
   if (typeof db !== 'undefined' && db) {
     try {
       const snap = await db.collection('projects').where('status', '==', 'published').get();
-      items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch (e) { /* fall back */ }
+      extra = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { /* static only */ }
   }
-  if (!items.length) items = STATIC_WORK;
+  const titles = new Set(STATIC_WORK.map(p => normTitle(p.title)));
+  const hosts = new Set(STATIC_WORK.map(p => hostOf(p.demoURL)));
+  hosts.add('visionqast.com'); /* our own site is not a client project */
+  extra = extra.filter(p => !titles.has(normTitle(p.title)) && !hosts.has(hostOf(p.demoURL)));
 
-  /* featured first */
+  const items = [...STATIC_WORK, ...extra];
   items.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
   WORK_ITEMS = items;
 
@@ -121,29 +130,34 @@ async function loadWork() {
 
 function renderWork(items) {
   const grid = document.getElementById('work-grid');
-  grid.innerHTML = items.map((p, i) => `
-    <article class="work-card" data-cat="${(p.category || '').toLowerCase()}" data-reveal data-delay="${(i % 3) + 1}">
+  grid.innerHTML = items.map((p, i) => {
+    const url = p.demoURL ? safeUrl(p.demoURL) : '';
+    const tag = url ? 'a' : 'article';
+    const linkAttrs = url ? ` href="${url}" target="_blank" rel="noopener" aria-label="Visit ${escapeHtml(p.title)} website"` : '';
+    return `
+    <${tag} class="work-card" data-cat="${escapeHtml((p.category || '').toLowerCase())}"${linkAttrs} data-reveal data-delay="${(i % 3) + 1}">
       <div class="work-img">
-        ${p.imageURL ? `<img src="${safeUrl(p.imageURL)}" alt="${escapeHtml(p.title)}" loading="lazy">`
+        ${p.imageURL ? `<img src="${safeUrl(p.imageURL)}" alt="${escapeHtml(p.title)} website screenshot" loading="lazy" width="880" height="550">`
           : `<div class="work-fallback" style="background:${GRADS[i % GRADS.length]}">${escapeHtml((p.title || '?')[0])}</div>`}
         ${p.category ? `<span class="work-cat">${escapeHtml(p.category)}</span>` : ''}
         ${p.featured ? `<span class="work-star">★ Featured</span>` : ''}
+        ${url ? `<span class="work-visit">Visit live site ↗</span>` : ''}
       </div>
       <div class="work-body">
+        ${p.location ? `<div class="work-loc">📍 ${escapeHtml(p.location)}</div>` : ''}
         <h3>${escapeHtml(p.title)}</h3>
         <p>${escapeHtml(p.shortDescription || (p.description || '').slice(0, 110))}</p>
         <div class="work-tech">${(p.technologies || []).slice(0, 4).map(t => `<span>${escapeHtml(t)}</span>`).join('')}</div>
-        <div class="work-links">
-          ${p.demoURL ? `<a href="${safeUrl(p.demoURL)}" target="_blank" rel="noopener" class="work-link">↗ Live Demo</a>` : ''}
-          ${p.githubURL ? `<a href="${safeUrl(p.githubURL)}" target="_blank" rel="noopener" class="work-link">GitHub</a>` : ''}
-        </div>
+        ${url ? `<div class="work-links"><span class="work-link">🌐 ${escapeHtml(hostOf(p.demoURL))} ↗</span></div>` : ''}
       </div>
-    </article>`).join('');
+    </${tag}>`;
+  }).join('');
   reveal(grid);
 }
 
 function wireFilters() {
-  const filters = document.querySelectorAll('.filter');
+  /* Portfolio filters only — service filters carry data-filter-scope */
+  const filters = document.querySelectorAll('.filters:not([data-filter-scope]) .filter');
   if (!filters.length) return;
   filters.forEach(btn => btn.addEventListener('click', () => {
     filters.forEach(b => b.classList.remove('active'));
@@ -155,66 +169,73 @@ function wireFilters() {
   }));
 }
 
+/* Kept in sync with REAL_PROJECTS in /admin/seed.html */
+const W = '/assets/images/work/';
 const STATIC_WORK = [
-  { title:'VisionQast', category:'SaaS', featured:true,
-    shortDescription:'Our own multi-page agency platform with a full admin CMS/CRM dashboard, leads pipeline, and Firebase-powered content management.',
-    technologies:['JavaScript','Firebase','CMS/CRM','Responsive'],
-    demoURL:'https://visionqast.com' },
+  { title:'The Family Dental Clinic', category:'Healthcare', featured:true, location:'Ravet, Pune',
+    shortDescription:'SEO-optimised dental clinic website for Dr. Swapnil Bade: dental implants & painless RCT, Google rating, gallery and appointment booking.',
+    technologies:['SEO','Schema.org','Local SEO','Responsive'],
+    demoURL:'https://drswapnilbade.com', imageURL: W + 'family-dental.webp' },
 
-  { title:'Kardile Buro Nursing Home', category:'Web', featured:true,
-    shortDescription:'A nursing-home & training institute site with Firebase live data, dynamic courses and gallery, branding, and community links.',
-    technologies:['JavaScript','Firebase','Dynamic CMS','Responsive'],
-    demoURL:'https://ysinstitutes.com' },
+  { title:'Ashmak Media', category:'Media & Creative', featured:true, location:'Dubai, UAE & India',
+    shortDescription:'Portfolio website for a Dubai & India creative studio offering video production, photography and graphic design, with showreel and project gallery.',
+    technologies:['Portfolio','Video Showreel','Animations','Responsive'],
+    demoURL:'https://www.ashmakmedia.com', imageURL: W + 'ashmak-media.webp' },
 
-  { title:'The Rising Star School', category:'Web', featured:true,
-    shortDescription:'A vibrant school website featuring an announcement slider, programs, gallery, and a complete mobile-responsive overhaul.',
-    technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://the-rising-star-school.vercel.app' },
+  { title:'Robotics Studio Automation', category:'Industrial', featured:true, location:'Pune',
+    shortDescription:'Industrial automation website for a robotics company supplying industrial & refurbished robots and turnkey automation across India.',
+    technologies:['B2B','Lead Gen','SEO','Responsive'],
+    demoURL:'https://roboticsstudio.in', imageURL: W + 'robotics-studio.webp' },
 
-  { title:'The Family Dental', category:'Web', featured:true,
-    shortDescription:'SEO-optimised dental practice site for Dr. Swapnil Bade with structured-data schemas, ratings, and an image gallery.',
-    technologies:['HTML5','CSS3','SEO','Schema.org'],
-    demoURL:'https://drswapnilbade.com' },
+  { title:'Yugveer Child Clinic', category:'Healthcare', featured:false, location:'Moshi, Pune',
+    shortDescription:'Warm, parent-friendly paediatric clinic website for Dr. Prashant Patil, covering newborn to adolescent care with easy appointment booking.',
+    technologies:['Healthcare','Appointment CTA','SEO','Responsive'],
+    demoURL:'https://drwebsite-pi.vercel.app', imageURL: W + 'yugveer-child-clinic.webp' },
 
-  { title:'Robotics Studio', category:'Web', featured:false,
-    shortDescription:'An engaging robotics & STEM education studio website presenting courses, programs, and student projects.',
-    technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://roboticsstudio.in' },
+  { title:'Ashoka Lab', category:'Pathology Lab', featured:false, location:'Pune',
+    shortDescription:'24/7 pathology lab website with popular tests, home sample collection, centres and one-tap call & WhatsApp booking.',
+    technologies:['Local SEO','Test Catalog','WhatsApp','Responsive'],
+    demoURL:'https://www.ashokalab.in', imageURL: W + 'ashoka-lab.webp' },
 
-  { title:'Gajanan Laboratory', category:'Web', featured:false,
-    shortDescription:'A pathology laboratory website with a full test catalog and a WhatsApp-based test enquiry flow.',
-    technologies:['HTML5','CSS3','JavaScript','WhatsApp API'],
-    demoURL:'https://gajanan-laboratory-website.vercel.app' },
+  { title:'Shree Pathology Lab', category:'Pathology Lab', featured:false, location:'Pimpri, Pune',
+    shortDescription:'ISO-certified diagnostic lab website with health packages, transparent pricing, timings and home collection booking.',
+    technologies:['Health Packages','Local SEO','Booking','Responsive'],
+    demoURL:'https://shreepathlab.com', imageURL: W + 'shree-pathology-lab.webp' },
 
-  { title:'NIDA Pathology Lab', category:'Web', featured:false,
-    shortDescription:'Multi-branch pathology lab website with test catalog, branch cards, working hours, and online enquiry.',
-    technologies:['HTML5','CSS3','JavaScript','SEO'],
-    demoURL:'https://nidapathologylab.in' },
+  { title:'Gajanan Laboratory', category:'Pathology Lab', featured:false, location:'Chikhali, Pimpri-Chinchwad',
+    shortDescription:'Pathology lab website with full test catalogue, packages, updates and a WhatsApp-based test enquiry flow.',
+    technologies:['Test Catalog','WhatsApp','Local SEO','Responsive'],
+    demoURL:'https://gajananlaboratory.com', imageURL: W + 'gajanan-laboratory.webp' },
 
-  { title:'Shree Pathology Lab', category:'Web', featured:false,
-    shortDescription:'A pathology lab site featuring health packages, transparent pricing, and easy contact for bookings.',
-    technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://shreepathlab.com' },
+  { title:'NIDA Pathology Laboratory', category:'Pathology Lab', featured:false, location:'Pune',
+    shortDescription:'ISO 9001:2015 certified lab website with doorstep sample collection, multi-branch info, test catalogue and online booking.',
+    technologies:['Multi-branch','Booking','SEO','Responsive'],
+    demoURL:'https://nidapathologylab.in', imageURL: W + 'nida-pathology-lab.webp' },
 
-  { title:'Ashoka Labs', category:'Web', featured:false,
-    shortDescription:'A diagnostic lab website with an optimised gallery and clear service presentation for patients.',
-    technologies:['HTML5','CSS3','JavaScript','SEO'],
-    demoURL:'https://ashokalab.in' },
+  { title:'Be Well Clinic', category:'Healthcare', featured:false, location:'Pimpri, Pune',
+    shortDescription:'Ayurvedic wellness clinic website presenting Panchakarma therapies and treatments, with appointment booking and reviews.',
+    technologies:['Healthcare','Booking','SEO','Vercel'],
+    demoURL:'https://be-well-clinic.vercel.app', imageURL: W + 'be-well-clinic.webp' },
 
-  { title:'Be Well Clinic', category:'Web', featured:false,
-    shortDescription:'A clean, trust-building website for a multi-speciality clinic with services, appointment enquiry, and responsive layouts.',
-    technologies:['HTML5','CSS3','JavaScript','Vercel'],
-    demoURL:'https://be-well-clinic.vercel.app' },
+  { title:'Kardile Buro Healthcare Foundation', category:'Education', featured:false, location:'Ahilyanagar, Maharashtra',
+    shortDescription:'Website for an ISO-certified group of paramedical, nursing and allied health colleges, with live courses, gallery and announcements.',
+    technologies:['Firebase','Dynamic CMS','Admissions','Responsive'],
+    demoURL:'https://ysinstitutes.com', imageURL: W + 'kardile-buro.webp' },
 
-  { title:'S4S Coatings', category:'Web', featured:false,
-    shortDescription:'A bold industrial brand site for a coatings manufacturer showcasing products, capabilities, and enquiries.',
-    technologies:['HTML5','CSS3','JavaScript','Vercel'],
-    demoURL:'https://s4s-coatings.vercel.app' },
+  { title:'The Rising Star School', category:'Education', featured:false, location:'Pune',
+    shortDescription:'Vibrant school website with admissions banner, programmes, events, gallery and a complete mobile-responsive overhaul.',
+    technologies:['Admissions','Gallery','Animations','Responsive'],
+    demoURL:'https://the-rising-star-school.vercel.app', imageURL: W + 'rising-star-school.webp' },
 
-  { title:'AP Copiers', category:'Web', featured:false,
-    shortDescription:'Business website for a copier & printing solutions company, with a PWA favicon/manifest and branded tab identity.',
-    technologies:['HTML5','CSS3','PWA','SEO'],
-    demoURL:'https://apcopiers.in' },
+  { title:'S4S Coatings', category:'Industrial', featured:false, location:'Pimpri-Chinchwad, Pune',
+    shortDescription:'Bold industrial brand site for an epoxy, PU & ESD floor-coating manufacturer, showcasing products, capabilities and quote requests.',
+    technologies:['B2B','Lead Gen','Gallery','Vercel'],
+    demoURL:'https://s4s-coatings.vercel.app', imageURL: W + 's4s-coatings.webp' },
+
+  { title:'AP Copiers', category:'Business', featured:false, location:'Pimpri, Pune',
+    shortDescription:'Business website for a one-stop xerox, printing & stationery centre, with services, reviews and WhatsApp enquiries.',
+    technologies:['Local SEO','PWA','WhatsApp','Responsive'],
+    demoURL:'https://apcopiers.in', imageURL: W + 'ap-copiers.webp' },
 ];
 
 /* ── Testimonials slider ────────────────────────────────────── */
@@ -359,8 +380,106 @@ function initContact() {
   });
 }
 
+/* ── Service catalogue filters (services page) + home tabs ──── */
+function initServiceFilters() {
+  document.querySelectorAll('[data-filter-scope]').forEach(scope => {
+    const btns = scope.querySelectorAll('[data-filter]');
+    const cards = document.querySelectorAll(scope.dataset.filterScope);
+    const apply = f => {
+      btns.forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+      cards.forEach(c => { c.hidden = f !== 'all' && c.dataset.cat !== f; });
+    };
+    btns.forEach(b => b.addEventListener('click', () => apply(b.dataset.filter)));
+    /* Deep links (#seo etc.) must never land on a filtered-out card */
+    const showHash = () => {
+      const t = location.hash && document.getElementById(location.hash.slice(1));
+      if (t && t.hidden) { apply('all'); t.scrollIntoView(); }
+      if (t) { t.classList.add('in', 'sd-flash'); setTimeout(() => t.classList.remove('sd-flash'), 1800); }
+    };
+    window.addEventListener('hashchange', showHash);
+    showHash();
+  });
+}
+
+/* ── Home: service category tabs ────────────────────────────── */
+function initServiceTabs() {
+  const tabs = document.querySelectorAll('.stab');
+  if (!tabs.length) return;
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => { const on = x === t; x.classList.toggle('active', on); x.setAttribute('aria-selected', on); });
+    document.querySelectorAll('.stab-panel').forEach(p => {
+      const on = p.dataset.panel === t.dataset.tab;
+      p.hidden = !on; p.classList.toggle('active', on);
+    });
+  }));
+}
+
+/* ── Short lead forms (home hero audit) → Firestore `contacts` ─ */
+function initLeadForms() {
+  document.querySelectorAll('form.lead-form').forEach(form => {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const f = n => form.elements[n];
+      const name = f('name').value.trim();
+      const email = f('email').value.trim();
+      form.querySelectorAll('.f-input').forEach(i => i.classList.remove('err'));
+      let ok = true;
+      if (!name) { f('name').classList.add('err'); ok = false; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { f('email').classList.add('err'); ok = false; }
+      if (!ok) return;
+
+      const site = f('website')?.value.trim();
+      const data = {
+        name, email,
+        phone: f('phone')?.value.trim() || '',
+        service: f('service')?.value || '',
+        message: `${form.dataset.source || 'Website lead'}${site ? ` · Website: ${site}` : ''}`,
+        status: 'new',
+      };
+      const btn = form.querySelector('[type="submit"]');
+      const txt = btn.textContent;
+      btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Sending…';
+      try {
+        if (typeof db !== 'undefined' && db) {
+          await db.collection('contacts').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        } else { await new Promise(r => setTimeout(r, 900)); }
+        [...form.children].forEach(el => { if (!el.classList.contains('lead-success')) el.hidden = true; });
+        form.querySelector('.lead-success').hidden = false;
+      } catch (err) {
+        btn.disabled = false; btn.textContent = txt;
+        alert('Something went wrong. Please WhatsApp us at +91 72493 95515 or email visionqast@gmail.com');
+      }
+    });
+  });
+}
+
+/* ── Home: ad-budget ROI calculator ─────────────────────────── */
+function initCalc() {
+  const ids = ['budget', 'cpl', 'conv', 'value'];
+  const inp = Object.fromEntries(ids.map(k => [k, document.getElementById('c-' + k)]));
+  if (!inp.budget) return;
+  const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
+  const set = (id, v) => { document.getElementById(id).textContent = v; };
+  const run = () => {
+    const b = +inp.budget.value, cpl = +inp.cpl.value, conv = +inp.conv.value, val = +inp.value.value;
+    set('o-budget', inr(b)); set('o-cpl', inr(cpl)); set('o-conv', conv + '%'); set('o-value', inr(val));
+    const leads = b / cpl, cust = leads * conv / 100, rev = cust * val;
+    set('r-leads', Math.round(leads).toLocaleString('en-IN'));
+    set('r-cust', (cust < 10 ? cust.toFixed(1) : Math.round(cust)).toLocaleString('en-IN'));
+    set('r-rev', inr(rev));
+    set('r-roas', (rev / b).toFixed(1) + 'x');
+    ids.forEach(k => inp[k].style.setProperty('--p', ((inp[k].value - inp[k].min) / (inp[k].max - inp[k].min) * 100) + '%'));
+  };
+  ids.forEach(k => inp[k].addEventListener('input', run));
+  run();
+}
+
 /* ── Boot ───────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  initServiceTabs();
+  initLeadForms();
+  initCalc();
+  initServiceFilters();
   loadServices();
   loadWork();
   loadTestimonials();

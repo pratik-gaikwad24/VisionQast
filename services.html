@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services — VisionQast</title>
-  <meta name="description" content="VisionQast services: web development, software development, digital marketing, Meta ads (Facebook & Instagram), SEO, and website maintenance & support." />
+  <title>Services — Web Development, Digital Marketing, Ads, SEO, AEO & GEO | VisionQast</title>
+  <meta name="description" content="VisionQast services: website development, UI/UX design, custom software, mobile apps, e-commerce, digital marketing, Meta ads, Google ads, LinkedIn management & ads, SEO, AEO, GEO, local SEO, branding and website maintenance." />
   <link rel="canonical" href="https://visionqast.com/services.html" />
-  <meta name="theme-color" content="#F5F6FC" />
+  <meta name="theme-color" content="#FAF8F6" />
   <link rel="icon" href="/favicon.ico" sizes="48x48" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png" />
@@ -14,6 +14,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="/assets/css/style.css" />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"What is the difference between SEO, AEO and GEO?","acceptedAnswer":{"@type":"Answer","text":"SEO helps your pages rank in Google's search results. AEO (Answer Engine Optimisation) structures your content so it is picked as the direct answer in featured snippets, Google's People Also Ask and voice assistants. GEO (Generative Engine Optimisation) makes your brand visible and cited inside AI-generated answers from ChatGPT, Google AI Overviews, Gemini, Perplexity and Copilot."}},
+    {"@type":"Question","name":"Do I need Meta Ads, Google Ads or LinkedIn Ads?","acceptedAnswer":{"@type":"Answer","text":"It depends on your buyer. Google Ads captures people already searching for what you sell. Meta Ads (Facebook and Instagram) builds demand and works well for consumer brands, local businesses and retargeting. LinkedIn Ads reach decision-makers by job title, industry and company size, which suits B2B. We recommend a mix after a free audit."}},
+    {"@type":"Question","name":"Is ad spend included in your fees?","acceptedAnswer":{"@type":"Answer","text":"No. Ad budgets are paid directly to Meta, Google or LinkedIn from your own ad account, so you keep full ownership and transparency. Our fee covers strategy, creatives, setup, management and reporting."}},
+    {"@type":"Question","name":"How long does SEO take to show results?","acceptedAnswer":{"@type":"Answer","text":"Technical fixes and local SEO improvements can show movement within 4–8 weeks. Competitive keyword rankings typically take 3–6 months of consistent work. We share monthly ranking, traffic and lead reports so progress is always visible."}},
+    {"@type":"Question","name":"Can you handle my website and marketing together?","acceptedAnswer":{"@type":"Answer","text":"Yes. Because we build the website and run the marketing, landing pages, tracking, speed and SEO are set up correctly from day one, and every rupee of ad spend lands on a page designed to convert."}}
+  ]}
+  </script>
 </head>
 <body>
 
@@ -26,54 +36,357 @@
     <div class="orb orb-b"></div>
     <div class="container">
       <div class="eyebrow" data-reveal>Our Services</div>
-      <h1 class="page-hero-title" data-reveal data-delay="1">Full-Stack Solutions,<br><span class="gradient-text">End to End</span></h1>
-      <p class="lead" data-reveal data-delay="2">Whatever you're building, we have the expertise to design, develop, and ship it — beautifully and on time.</p>
+      <h1 class="page-hero-title" data-reveal data-delay="1">Build It. Grow It.<br><span class="gradient-text">Get Found Everywhere.</span></h1>
+      <p class="lead" data-reveal data-delay="2">Websites and software that work, ad campaigns that pay back, and search visibility across Google <em>and</em> AI assistants like ChatGPT, Gemini and Perplexity. All under one roof.</p>
       <div class="crumb" data-reveal data-delay="3"><a href="/index.html">Home</a> / <span>Services</span></div>
     </div>
   </section>
 
-  <!-- ═══ SERVICES GRID ═══ -->
-  <section class="section">
+  <!-- ═══ SERVICE CATALOGUE ═══ -->
+  <section class="section" style="padding-top:2rem">
     <div class="container">
-      <div class="cards-grid" id="services-grid">
-        <div class="svc-loading">Loading services…</div>
+      <div class="filters svc-filters" aria-label="Filter services" data-filter-scope=".sd-grid .svc-detail">
+        <button class="filter active" data-filter="all">All Services</button>
+        <button class="filter" data-filter="build">🌐 Build</button>
+        <button class="filter" data-filter="grow">📣 Grow &amp; Ads</button>
+        <button class="filter" data-filter="found">🔍 Get Found (SEO · AEO · GEO)</button>
+        <button class="filter" data-filter="support">🛠️ Brand &amp; Support</button>
+      </div>
+
+      <div class="sd-grid">
+
+        <!-- ── BUILD ── -->
+        <article class="svc-detail" id="web-development" data-cat="build" data-reveal>
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#F85000,#FF7A2F)">🌐</div><div><span class="sd-cat">Build</span><h3>Website Development</h3></div></div>
+          <p class="sd-lead">Fast, secure, mobile-first websites that turn visitors into enquiries, built to rank and convert from day one.</p>
+          <ul class="sd-list">
+            <li>Business, corporate &amp; portfolio websites</li>
+            <li>Landing pages built for ad campaigns</li>
+            <li>WordPress, custom CMS or headless (Next.js / React)</li>
+            <li>Speed-optimised: Core Web Vitals &amp; 90+ PageSpeed</li>
+            <li>SEO-ready structure, schema markup &amp; analytics setup</li>
+            <li>Lead forms, WhatsApp chat &amp; CRM integration</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">React</span><span class="svc-tag">Next.js</span><span class="svc-tag">WordPress</span></div><a class="work-link" href="/contact.html?service=web-development">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="ui-ux-design" data-cat="build" data-reveal data-delay="1">
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#06B6D4,#F85000)">🎨</div><div><span class="sd-cat">Build</span><h3>Website Design (UI/UX)</h3></div></div>
+          <p class="sd-lead">Designs that look premium and guide users to act. Research-led layouts, clear messaging and clickable prototypes before any code.</p>
+          <ul class="sd-list">
+            <li>User research, wireframes &amp; information architecture</li>
+            <li>High-fidelity Figma designs &amp; interactive prototypes</li>
+            <li>Conversion-focused landing page design</li>
+            <li>Design systems &amp; reusable component libraries</li>
+            <li>Website redesigns &amp; UX audits</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Figma</span><span class="svc-tag">Prototyping</span><span class="svc-tag">CRO</span></div><a class="work-link" href="/contact.html?service=ui-ux-design">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="software-development" data-cat="build" data-reveal>
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#0EA5E9,#2563EB)">💻</div><div><span class="sd-cat">Build</span><h3>Custom Software Development</h3></div></div>
+          <p class="sd-lead">Software built around how your business actually works, replacing spreadsheets and manual work with tools your team enjoys using.</p>
+          <ul class="sd-list">
+            <li>CRM, ERP &amp; admin dashboards</li>
+            <li>Booking, billing, inventory &amp; HR systems</li>
+            <li>SaaS products &amp; MVPs for startups</li>
+            <li>API development &amp; third-party integrations</li>
+            <li>AI features: chatbots, automation &amp; document processing</li>
+            <li>Cloud hosting, CI/CD &amp; ongoing support</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Node.js</span><span class="svc-tag">Python</span><span class="svc-tag">Firebase</span></div><a class="work-link" href="/contact.html?service=software-development">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="mobile-apps" data-cat="build" data-reveal data-delay="1">
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#FB923C,#06B6D4)">📱</div><div><span class="sd-cat">Build</span><h3>Mobile App Development</h3></div></div>
+          <p class="sd-lead">Android and iOS apps from one codebase. Smooth, reliable and published to the Play Store and App Store.</p>
+          <ul class="sd-list">
+            <li>Cross-platform apps with Flutter &amp; React Native</li>
+            <li>Progressive Web Apps (PWA)</li>
+            <li>Push notifications, payments &amp; maps</li>
+            <li>Admin panel to manage app content</li>
+            <li>Store listing, launch &amp; updates</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Flutter</span><span class="svc-tag">React Native</span><span class="svc-tag">PWA</span></div><a class="work-link" href="/contact.html?service=mobile-apps">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="ecommerce" data-cat="build" data-reveal>
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#10B981,#0EA5E9)">🛒</div><div><span class="sd-cat">Build</span><h3>E-Commerce Development</h3></div></div>
+          <p class="sd-lead">Online stores that sell, with fast checkout, Indian payment gateways and catalogues that are easy to manage.</p>
+          <ul class="sd-list">
+            <li>Shopify, WooCommerce &amp; custom stores</li>
+            <li>Razorpay, PhonePe, UPI &amp; COD integration</li>
+            <li>Shipping, GST invoices &amp; inventory sync</li>
+            <li>Product feeds for Google Shopping &amp; Meta catalogues</li>
+            <li>Abandoned-cart recovery via email &amp; WhatsApp</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Shopify</span><span class="svc-tag">WooCommerce</span><span class="svc-tag">Razorpay</span></div><a class="work-link" href="/contact.html?service=ecommerce">Discuss this →</a></div>
+        </article>
+
+        <!-- ── GROW ── -->
+        <article class="svc-detail" id="digital-marketing" data-cat="grow" data-reveal data-delay="1">
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#C2410C,#F43F5E)">📣</div><div><span class="sd-cat">Grow</span><h3>Digital &amp; Social Media Marketing</h3></div></div>
+          <p class="sd-lead">A complete growth plan, not just posts. Strategy, content and campaigns across the channels where your customers spend time.</p>
+          <ul class="sd-list">
+            <li>Digital marketing strategy &amp; monthly content calendar</li>
+            <li>Instagram, Facebook &amp; YouTube page management</li>
+            <li>Reels, carousels, post design &amp; copywriting</li>
+            <li>Email &amp; WhatsApp marketing campaigns</li>
+            <li>Influencer collaborations</li>
+            <li>Monthly analytics &amp; growth reports</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Social Media</span><span class="svc-tag">Content</span><span class="svc-tag">Email</span></div><a class="work-link" href="/contact.html?service=digital-marketing">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="meta-ads" data-cat="grow" data-reveal>
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#2563EB,#C2410C)">🎯</div><div><span class="sd-cat">Grow · Paid Ads</span><h3>Meta Ads (Facebook &amp; Instagram)</h3></div></div>
+          <p class="sd-lead">Scroll-stopping ad campaigns that generate leads and sales, tracked properly so you know exactly what every rupee returns.</p>
+          <ul class="sd-list">
+            <li>Lead generation, sales &amp; WhatsApp-message campaigns</li>
+            <li>Audience research, lookalikes &amp; retargeting</li>
+            <li>Ad creatives: static, carousel &amp; Reels video</li>
+            <li>Meta Pixel &amp; Conversions API (CAPI) setup</li>
+            <li>A/B testing &amp; daily budget optimisation</li>
+            <li>Weekly reports: CPL, ROAS &amp; cost per sale</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Facebook Ads</span><span class="svc-tag">Instagram Ads</span><span class="svc-tag">ROAS</span></div><a class="work-link" href="/contact.html?service=meta-ads">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="google-ads" data-cat="grow" data-reveal data-delay="1">
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#F59E0B,#10B981)">💰</div><div><span class="sd-cat">Grow · Paid Ads</span><h3>Google Ads (PPC)</h3></div></div>
+          <p class="sd-lead">Show up at the exact moment people search for what you sell, with campaigns built to keep cost per lead low and lead quality high.</p>
+          <ul class="sd-list">
+            <li>Search, Performance Max &amp; Display campaigns</li>
+            <li>YouTube video ads</li>
+            <li>Google Shopping campaigns for e-commerce</li>
+            <li>Keyword research, negative keywords &amp; bid strategy</li>
+            <li>Conversion tracking with GA4 &amp; Google Tag Manager</li>
+            <li>Landing page optimisation for Quality Score</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Search Ads</span><span class="svc-tag">PMax</span><span class="svc-tag">YouTube</span></div><a class="work-link" href="/contact.html?service=google-ads">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="linkedin" data-cat="grow" data-reveal>
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#0A66C2,#06B6D4)">💼</div><div><span class="sd-cat">Grow · B2B</span><h3>LinkedIn Management &amp; Ads</h3></div></div>
+          <p class="sd-lead">Build authority and reach decision-makers. We manage your company page and founder profile and run targeted LinkedIn ad campaigns.</p>
+          <ul class="sd-list">
+            <li>Company page setup, optimisation &amp; regular posting</li>
+            <li>Founder / leadership personal branding &amp; ghostwriting</li>
+            <li>LinkedIn Lead Gen Form &amp; Sponsored Content ads</li>
+            <li>Targeting by job title, industry &amp; company size</li>
+            <li>Conversation (InMail) &amp; retargeting campaigns</li>
+            <li>B2B lead-generation &amp; outreach strategy</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">B2B</span><span class="svc-tag">Lead Gen</span><span class="svc-tag">Personal Brand</span></div><a class="work-link" href="/contact.html?service=linkedin">Discuss this →</a></div>
+        </article>
+
+        <!-- ── GET FOUND ── -->
+        <article class="svc-detail" id="seo" data-cat="found" data-reveal data-delay="1">
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#10B981,#06B6D4)">🔍</div><div><span class="sd-cat">Get Found</span><h3>SEO: Search Engine Optimisation</h3></div></div>
+          <p class="sd-lead">Rank higher on Google and earn steady, free enquiries month after month with white-hat, data-driven SEO.</p>
+          <ul class="sd-list">
+            <li>Technical SEO audit: speed, indexing &amp; Core Web Vitals</li>
+            <li>Keyword research &amp; competitor gap analysis</li>
+            <li>On-page optimisation, internal linking &amp; schema</li>
+            <li>SEO content &amp; blog writing</li>
+            <li>Quality backlinks &amp; digital PR</li>
+            <li>Monthly ranking, traffic &amp; lead reports</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Technical SEO</span><span class="svc-tag">Content</span><span class="svc-tag">Backlinks</span></div><a class="work-link" href="/contact.html?service=seo">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail sd-new" id="aeo" data-cat="found" data-reveal>
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#FB923C,#C2410C)">💬</div><div><span class="sd-cat">Get Found · New</span><h3>AEO: Answer Engine Optimisation</h3></div></div>
+          <p class="sd-lead">Be <em>the</em> answer. We structure your content so Google features it directly in snippets, “People Also Ask” and voice search results.</p>
+          <ul class="sd-list">
+            <li>Question research: what your customers actually ask</li>
+            <li>Featured-snippet &amp; People Also Ask optimisation</li>
+            <li>FAQ, HowTo &amp; Q&amp;A schema markup</li>
+            <li>Voice search (Google Assistant, Siri, Alexa) optimisation</li>
+            <li>Concise, answer-first content rewrites</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Featured Snippets</span><span class="svc-tag">Voice Search</span><span class="svc-tag">Schema</span></div><a class="work-link" href="/contact.html?service=aeo">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail sd-new" id="geo" data-cat="found" data-reveal data-delay="1">
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#F43F5E,#FB923C)">🤖</div><div><span class="sd-cat">Get Found · New</span><h3>GEO: Generative Engine Optimisation</h3></div></div>
+          <p class="sd-lead">Millions now ask ChatGPT, Gemini and Perplexity instead of Googling. GEO makes sure AI tools mention and recommend <em>your</em> brand.</p>
+          <ul class="sd-list">
+            <li>AI visibility audit across ChatGPT, Gemini, Perplexity &amp; Copilot</li>
+            <li>Google AI Overviews optimisation</li>
+            <li>Entity &amp; brand-signal building (Wikidata, directories, reviews)</li>
+            <li>Citation-worthy content with stats, sources &amp; expert quotes</li>
+            <li>llms.txt, structured data &amp; crawler access setup</li>
+            <li>Monthly AI share-of-voice tracking</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">ChatGPT</span><span class="svc-tag">AI Overviews</span><span class="svc-tag">Perplexity</span></div><a class="work-link" href="/contact.html?service=geo">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="local-seo" data-cat="found" data-reveal>
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#F59E0B,#F43F5E)">📍</div><div><span class="sd-cat">Get Found</span><h3>Local SEO &amp; Google Business Profile</h3></div></div>
+          <p class="sd-lead">Appear in the Google Maps “local pack” when nearby customers search, and turn profile views into calls and visits.</p>
+          <ul class="sd-list">
+            <li>Google Business Profile setup, verification &amp; optimisation</li>
+            <li>Weekly GBP posts, photos &amp; offers</li>
+            <li>Review generation &amp; response management</li>
+            <li>Local citations &amp; NAP consistency</li>
+            <li>City / area landing pages</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Google Maps</span><span class="svc-tag">Reviews</span><span class="svc-tag">Citations</span></div><a class="work-link" href="/contact.html?service=local-seo">Discuss this →</a></div>
+        </article>
+
+        <!-- ── SUPPORT ── -->
+        <article class="svc-detail" id="branding" data-cat="support" data-reveal data-delay="1">
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#F97316,#F43F5E)">✏️</div><div><span class="sd-cat">Brand</span><h3>Branding &amp; Graphic Design</h3></div></div>
+          <p class="sd-lead">A brand identity people remember, consistent across your website, social media, ads and print.</p>
+          <ul class="sd-list">
+            <li>Logo design &amp; brand identity guidelines</li>
+            <li>Social media templates &amp; ad creatives</li>
+            <li>Brochures, flyers &amp; company profiles</li>
+            <li>Digital visiting cards &amp; presentations</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Logo</span><span class="svc-tag">Identity</span><span class="svc-tag">Creatives</span></div><a class="work-link" href="/contact.html?service=branding">Discuss this →</a></div>
+        </article>
+
+        <article class="svc-detail" id="maintenance" data-cat="support" data-reveal>
+          <div class="sd-head"><div class="svc-ic" style="background:linear-gradient(135deg,#FB923C,#C2410C)">🛠️</div><div><span class="sd-cat">Support</span><h3>Website Maintenance &amp; Hosting</h3></div></div>
+          <p class="sd-lead">Keep your website fast, secure and up to date while you focus on running the business.</p>
+          <ul class="sd-list">
+            <li>Managed hosting, domain &amp; SSL</li>
+            <li>Daily backups &amp; uptime monitoring</li>
+            <li>Security updates &amp; malware protection</li>
+            <li>Content &amp; design updates on request</li>
+            <li>Google Workspace / business email setup &amp; migration</li>
+          </ul>
+          <div class="sd-foot"><div class="svc-tags"><span class="svc-tag">Hosting</span><span class="svc-tag">Security</span><span class="svc-tag">Backups</span></div><a class="work-link" href="/contact.html?service=maintenance">Discuss this →</a></div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SEO vs AEO vs GEO ═══ -->
+  <section class="section bg-alt" id="search-everywhere">
+    <div class="container">
+      <div class="section-head text-center">
+        <div class="eyebrow" data-reveal>Search Has Changed</div>
+        <h2 class="h-title" data-reveal data-delay="1">SEO, AEO &amp; GEO: <span class="gradient-text">Be Found Everywhere</span></h2>
+        <p class="lead" data-reveal data-delay="2">Your customers search on Google, ask voice assistants and chat with AI. Each needs a different kind of optimisation, and we cover all three.</p>
+      </div>
+      <div class="sx-grid">
+        <div class="sx-card" data-reveal data-delay="1">
+          <div class="sx-top"><span class="sx-badge" style="background:linear-gradient(135deg,#10B981,#06B6D4)">SEO</span><h3>Rank on Google</h3></div>
+          <dl>
+            <dt>Goal</dt><dd>Top positions in the blue-link results</dd>
+            <dt>Where</dt><dd>Google, Bing, Google Maps</dd>
+            <dt>Win</dt><dd>Clicks &amp; organic traffic to your site</dd>
+          </dl>
+          <a href="#seo" class="sx-link">Explore SEO →</a>
+        </div>
+        <div class="sx-card" data-reveal data-delay="2">
+          <div class="sx-top"><span class="sx-badge" style="background:linear-gradient(135deg,#FB923C,#C2410C)">AEO</span><h3>Be the Direct Answer</h3></div>
+          <dl>
+            <dt>Goal</dt><dd>Win snippets, People Also Ask &amp; voice answers</dd>
+            <dt>Where</dt><dd>Google answer boxes, Siri, Alexa, Assistant</dd>
+            <dt>Win</dt><dd>Position zero &amp; instant trust</dd>
+          </dl>
+          <a href="#aeo" class="sx-link">Explore AEO →</a>
+        </div>
+        <div class="sx-card" data-reveal data-delay="3">
+          <div class="sx-top"><span class="sx-badge" style="background:linear-gradient(135deg,#F43F5E,#FB923C)">GEO</span><h3>Get Cited by AI</h3></div>
+          <dl>
+            <dt>Goal</dt><dd>Be mentioned &amp; recommended in AI answers</dd>
+            <dt>Where</dt><dd>ChatGPT, Gemini, Perplexity, AI Overviews</dd>
+            <dt>Win</dt><dd>Brand recommendations where buyers ask AI</dd>
+          </dl>
+          <a href="#geo" class="sx-link">Explore GEO →</a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ═══ PROCESS ═══ -->
-  <section class="section bg-alt">
+  <section class="section">
     <div class="container">
       <div class="section-head text-center">
         <div class="eyebrow" data-reveal>How We Work</div>
-        <h2 class="h-title" data-reveal data-delay="1">Our Proven <span class="gradient-text">Development Process</span></h2>
-        <p class="lead" data-reveal data-delay="2">A clear, iterative process that keeps you in control at every step — from idea to launch and beyond.</p>
+        <h2 class="h-title" data-reveal data-delay="1">Our Proven <span class="gradient-text">Process</span></h2>
+        <p class="lead" data-reveal data-delay="2">The same clear, measurable process whether we're building a product or running a campaign.</p>
       </div>
       <div class="steps">
-        <div class="step" data-reveal data-delay="1"><span class="step-n">01</span><div class="step-ic" style="background:linear-gradient(135deg,#6C5CE7,#9333EA)">💬</div><h3>Discovery &amp; Strategy</h3><p>Deep-dive sessions to understand your goals, users, and market. We define scope, stack, and a realistic roadmap.</p></div>
-        <div class="step" data-reveal data-delay="2"><span class="step-n">02</span><div class="step-ic" style="background:linear-gradient(135deg,#06B6D4,#6C5CE7)">🎨</div><h3>Design &amp; Prototype</h3><p>High-fidelity Figma prototypes that look production-ready. You feel the product before a line of code.</p></div>
-        <div class="step" data-reveal data-delay="3"><span class="step-n">03</span><div class="step-ic" style="background:linear-gradient(135deg,#C026D3,#F43F5E)">⚙️</div><h3>Agile Development</h3><p>Two-week sprints with working demos at every checkpoint. Full code transparency via GitHub.</p></div>
-        <div class="step" data-reveal data-delay="1"><span class="step-n">04</span><div class="step-ic" style="background:linear-gradient(135deg,#F59E0B,#F43F5E)">🧪</div><h3>QA &amp; Testing</h3><p>Automated tests, manual QA across devices, performance profiling, and security audits before launch.</p></div>
-        <div class="step" data-reveal data-delay="2"><span class="step-n">05</span><div class="step-ic" style="background:linear-gradient(135deg,#10B981,#06B6D4)">🚀</div><h3>Launch</h3><p>Zero-downtime deployments, CI/CD pipelines, and monitoring so nothing goes wrong on go-live day.</p></div>
-        <div class="step" data-reveal data-delay="3"><span class="step-n">06</span><div class="step-ic" style="background:linear-gradient(135deg,#8B5CF6,#C026D3)">📈</div><h3>Grow &amp; Scale</h3><p>Ongoing support, new features, and data-driven iterations to keep growing after launch.</p></div>
+        <div class="step" data-reveal data-delay="1"><span class="step-n">01</span><div class="step-ic" style="background:linear-gradient(135deg,#F85000,#FF7A2F)">💬</div><h3>Discovery &amp; Audit</h3><p>We study your business, competitors, current website, ads and search visibility, then define goals and KPIs.</p></div>
+        <div class="step" data-reveal data-delay="2"><span class="step-n">02</span><div class="step-ic" style="background:linear-gradient(135deg,#06B6D4,#F85000)">🧭</div><h3>Strategy &amp; Plan</h3><p>A clear roadmap: what to build, which channels to use, budgets, timelines and how success will be measured.</p></div>
+        <div class="step" data-reveal data-delay="3"><span class="step-n">03</span><div class="step-ic" style="background:linear-gradient(135deg,#C2410C,#F43F5E)">🎨</div><h3>Design &amp; Create</h3><p>Prototypes, ad creatives and content, reviewed with you before anything goes live.</p></div>
+        <div class="step" data-reveal data-delay="1"><span class="step-n">04</span><div class="step-ic" style="background:linear-gradient(135deg,#F59E0B,#F43F5E)">⚙️</div><h3>Build &amp; Launch</h3><p>Development, campaign setup, tracking pixels and QA across devices, then a smooth launch.</p></div>
+        <div class="step" data-reveal data-delay="2"><span class="step-n">05</span><div class="step-ic" style="background:linear-gradient(135deg,#10B981,#06B6D4)">📊</div><h3>Measure &amp; Report</h3><p>Transparent dashboards and monthly reports on traffic, leads, CPL, ROAS and rankings. No vanity metrics.</p></div>
+        <div class="step" data-reveal data-delay="3"><span class="step-n">06</span><div class="step-ic" style="background:linear-gradient(135deg,#FB923C,#C2410C)">📈</div><h3>Optimise &amp; Scale</h3><p>We double down on what works, cut what doesn't, and keep improving results month after month.</p></div>
       </div>
     </div>
   </section>
 
   <!-- ═══ TECH STACK ═══ -->
-  <section class="section">
+  <section class="section bg-alt">
     <div class="container">
       <div class="section-head text-center">
-        <div class="eyebrow" data-reveal>Tech Stack</div>
+        <div class="eyebrow" data-reveal>Tools &amp; Platforms</div>
         <h2 class="h-title" data-reveal data-delay="1">Built With <span class="gradient-text">Best-in-Class Tools</span></h2>
       </div>
       <div class="tech-grid">
-        <div class="tech-cat" data-reveal data-delay="1"><h4><i style="background:#6C5CE7"></i>Frontend</h4><div class="tech-items"><span class="tech-pill">React</span><span class="tech-pill">Next.js</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Tailwind</span><span class="tech-pill">Vue</span></div></div>
-        <div class="tech-cat" data-reveal data-delay="2"><h4><i style="background:#06B6D4"></i>Backend</h4><div class="tech-items"><span class="tech-pill">Node.js</span><span class="tech-pill">Python</span><span class="tech-pill">FastAPI</span><span class="tech-pill">Django</span><span class="tech-pill">GraphQL</span></div></div>
-        <div class="tech-cat" data-reveal data-delay="3"><h4><i style="background:#C026D3"></i>CMS &amp; E-Commerce</h4><div class="tech-items"><span class="tech-pill">WordPress</span><span class="tech-pill">Shopify</span><span class="tech-pill">WooCommerce</span><span class="tech-pill">Custom CMS</span></div></div>
-        <div class="tech-cat" data-reveal data-delay="1"><h4><i style="background:#10B981"></i>Database</h4><div class="tech-items"><span class="tech-pill">PostgreSQL</span><span class="tech-pill">MongoDB</span><span class="tech-pill">Firebase</span><span class="tech-pill">Redis</span><span class="tech-pill">Supabase</span></div></div>
-        <div class="tech-cat" data-reveal data-delay="2"><h4><i style="background:#F59E0B"></i>Cloud &amp; DevOps</h4><div class="tech-items"><span class="tech-pill">AWS</span><span class="tech-pill">GCP</span><span class="tech-pill">Docker</span><span class="tech-pill">Kubernetes</span><span class="tech-pill">CI/CD</span></div></div>
-        <div class="tech-cat" data-reveal data-delay="3"><h4><i style="background:#F43F5E"></i>Marketing &amp; Ads</h4><div class="tech-items"><span class="tech-pill">Meta Ads</span><span class="tech-pill">Google Analytics</span><span class="tech-pill">Search Console</span><span class="tech-pill">Google Business</span><span class="tech-pill">Mailchimp</span></div></div>
+        <div class="tech-cat" data-reveal data-delay="1"><h4><i style="background:#F85000"></i>Frontend &amp; Mobile</h4><div class="tech-items"><span class="tech-pill">React</span><span class="tech-pill">Next.js</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Tailwind</span><span class="tech-pill">Flutter</span><span class="tech-pill">React Native</span></div></div>
+        <div class="tech-cat" data-reveal data-delay="2"><h4><i style="background:#06B6D4"></i>Backend &amp; Cloud</h4><div class="tech-items"><span class="tech-pill">Node.js</span><span class="tech-pill">Python</span><span class="tech-pill">Firebase</span><span class="tech-pill">PostgreSQL</span><span class="tech-pill">AWS</span><span class="tech-pill">Docker</span></div></div>
+        <div class="tech-cat" data-reveal data-delay="3"><h4><i style="background:#C2410C"></i>CMS &amp; E-Commerce</h4><div class="tech-items"><span class="tech-pill">WordPress</span><span class="tech-pill">Shopify</span><span class="tech-pill">WooCommerce</span><span class="tech-pill">Razorpay</span><span class="tech-pill">Custom CMS</span></div></div>
+        <div class="tech-cat" data-reveal data-delay="1"><h4><i style="background:#F43F5E"></i>Paid Ads</h4><div class="tech-items"><span class="tech-pill">Meta Ads Manager</span><span class="tech-pill">Google Ads</span><span class="tech-pill">LinkedIn Campaign Manager</span><span class="tech-pill">YouTube Ads</span></div></div>
+        <div class="tech-cat" data-reveal data-delay="2"><h4><i style="background:#10B981"></i>SEO, AEO &amp; GEO</h4><div class="tech-items"><span class="tech-pill">Search Console</span><span class="tech-pill">Ahrefs</span><span class="tech-pill">SEMrush</span><span class="tech-pill">Schema.org</span><span class="tech-pill">Google Business</span></div></div>
+        <div class="tech-cat" data-reveal data-delay="3"><h4><i style="background:#F59E0B"></i>Analytics &amp; Automation</h4><div class="tech-items"><span class="tech-pill">GA4</span><span class="tech-pill">Tag Manager</span><span class="tech-pill">Meta Pixel / CAPI</span><span class="tech-pill">Looker Studio</span><span class="tech-pill">WhatsApp API</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ENGAGEMENT MODELS ═══ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head text-center">
+        <div class="eyebrow" data-reveal>Ways to Work With Us</div>
+        <h2 class="h-title" data-reveal data-delay="1">Flexible <span class="gradient-text">Engagement Models</span></h2>
+        <p class="lead" data-reveal data-delay="2">Pick the model that fits your stage and budget. You can switch any time.</p>
+      </div>
+      <div class="em-grid">
+        <div class="em-card" data-reveal data-delay="1">
+          <div class="em-ic">📦</div>
+          <h3>Fixed-Price Project</h3>
+          <p>Clear scope, fixed timeline, predictable cost. Best for websites, apps and software builds.</p>
+          <ul class="sd-list"><li>Detailed proposal &amp; milestones</li><li>Milestone-based payments</li><li>Free post-launch support period</li></ul>
+        </div>
+        <div class="em-card em-feature" data-reveal data-delay="2">
+          <span class="em-pop">Most Popular</span>
+          <div class="em-ic">📅</div>
+          <h3>Monthly Growth Retainer</h3>
+          <p>Ongoing marketing, ads management, SEO / AEO / GEO and website care, billed monthly.</p>
+          <ul class="sd-list"><li>Dedicated account manager</li><li>Monthly strategy &amp; reporting call</li><li>No long lock-in contracts</li></ul>
+        </div>
+        <div class="em-card" data-reveal data-delay="3">
+          <div class="em-ic">👥</div>
+          <h3>Dedicated Team</h3>
+          <p>An extended tech &amp; marketing team working on your product and growth full-time.</p>
+          <ul class="sd-list"><li>Developers, designers &amp; marketers</li><li>Daily stand-ups &amp; sprint demos</li><li>Scale the team up or down</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FAQ ═══ -->
+  <section class="section bg-alt">
+    <div class="container-tight">
+      <div class="section-head text-center">
+        <div class="eyebrow" data-reveal>FAQ</div>
+        <h2 class="h-title" data-reveal data-delay="1">Questions, <span class="gradient-text">Answered</span></h2>
+      </div>
+      <div class="faq" data-reveal>
+        <details open><summary>What is the difference between SEO, AEO and GEO?</summary><p>SEO helps your pages rank in Google's search results. AEO (Answer Engine Optimisation) structures your content so it is picked as the direct answer in featured snippets, “People Also Ask” and voice assistants. GEO (Generative Engine Optimisation) makes your brand visible and cited inside AI-generated answers from ChatGPT, Google AI Overviews, Gemini, Perplexity and Copilot.</p></details>
+        <details><summary>Do I need Meta Ads, Google Ads or LinkedIn Ads?</summary><p>It depends on your buyer. Google Ads captures people already searching for what you sell. Meta Ads (Facebook &amp; Instagram) builds demand and works well for consumer brands, local businesses and retargeting. LinkedIn Ads reach decision-makers by job title, industry and company size, which suits B2B. We recommend the right mix after a free audit.</p></details>
+        <details><summary>Is ad spend included in your fees?</summary><p>No. Ad budgets are paid directly to Meta, Google or LinkedIn from your own ad account, so you keep full ownership and transparency. Our fee covers strategy, creatives, setup, management and reporting.</p></details>
+        <details><summary>How long does SEO take to show results?</summary><p>Technical fixes and local SEO improvements can show movement within 4–8 weeks. Competitive keyword rankings typically take 3–6 months of consistent work. We share monthly ranking, traffic and lead reports so progress is always visible.</p></details>
+        <details><summary>Can you handle my website and marketing together?</summary><p>Yes, and that's where we shine. Because we build the website and run the marketing, landing pages, tracking, speed and SEO are set up correctly from day one, and every rupee of ad spend lands on a page designed to convert.</p></details>
       </div>
     </div>
   </section>
@@ -83,9 +396,9 @@
     <div class="container">
       <div class="cta-band" data-reveal>
         <h2>Not Sure Which Service You Need?</h2>
-        <p>Book a free consultation and we'll help you figure out the right approach for your goals and budget.</p>
+        <p>Get a free audit of your website, ads and search visibility (Google + AI), with a clear plan for your goals and budget.</p>
         <div class="cta-actions">
-          <a href="/contact.html" class="btn btn-light btn-lg">Get a Free Consultation →</a>
+          <a href="/contact.html" class="btn btn-light btn-lg">Get a Free Audit →</a>
           <a href="/work.html" class="btn btn-outline-light btn-lg">See Our Work</a>
         </div>
       </div>

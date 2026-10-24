@@ -30,11 +30,11 @@
 
   <div class="seed-card" id="panel" style="display:none">
     <h1>Seed Real Projects</h1>
-    <p>This one-time tool publishes VisionQast's <strong>12 real client projects</strong> to the
+    <p>This one-time tool publishes VisionQast's <strong>13 real client projects</strong> to the
        <code>projects</code> collection so they appear on the public portfolio.</p>
     <div class="seed-note">
       <strong>What it does:</strong> deletes <em>every</em> existing project in Firebase (including the leftover demo
-      entries), then re-creates the 12 real projects as <strong>published</strong>. Safe to run again — it always
+      entries), then re-creates the 13 real projects as <strong>published</strong>. Safe to run again — it always
       ends with exactly these 12.
     </div>
     <div class="seed-actions">
@@ -55,67 +55,72 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="/assets/js/firebase-config.js"></script>
 <script>
-/* The 12 real projects — kept in sync with STATIC_WORK in /assets/js/script.js */
+/* The real client projects — kept in sync with STATIC_WORK in /assets/js/script.js */
 const REAL_PROJECTS = [
-  { title:'VisionQast', category:'SaaS', featured:true,
-    shortDescription:'Our own multi-page agency platform with a full admin CMS/CRM dashboard, leads pipeline, and Firebase-powered content management.',
-    technologies:['JavaScript','Firebase','CMS/CRM','Responsive'],
-    demoURL:'https://visionqast.com' },
+  { title:'The Family Dental Clinic', category:'Healthcare', featured:true, location:'Ravet, Pune',
+    shortDescription:'SEO-optimised dental clinic website for Dr. Swapnil Bade: dental implants & painless RCT, Google rating, gallery and appointment booking.',
+    technologies:['SEO','Schema.org','Local SEO','Responsive'],
+    demoURL:'https://drswapnilbade.com', imageURL: '/assets/images/work/family-dental.webp' },
 
-  { title:'Kardile Buro Nursing Home', category:'Web', featured:true,
-    shortDescription:'A nursing-home & training institute site with Firebase live data, dynamic courses and gallery, branding, and community links.',
-    technologies:['JavaScript','Firebase','Dynamic CMS','Responsive'],
-    demoURL:'https://ysinstitutes.com' },
+  { title:'Ashmak Media', category:'Media & Creative', featured:true, location:'Dubai, UAE & India',
+    shortDescription:'Portfolio website for a Dubai & India creative studio offering video production, photography and graphic design, with showreel and project gallery.',
+    technologies:['Portfolio','Video Showreel','Animations','Responsive'],
+    demoURL:'https://www.ashmakmedia.com', imageURL: '/assets/images/work/ashmak-media.webp' },
 
-  { title:'The Rising Star School', category:'Web', featured:true,
-    shortDescription:'A vibrant school website featuring an announcement slider, programs, gallery, and a complete mobile-responsive overhaul.',
-    technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://the-rising-star-school.vercel.app' },
+  { title:'Robotics Studio Automation', category:'Industrial', featured:true, location:'Pune',
+    shortDescription:'Industrial automation website for a robotics company supplying industrial & refurbished robots and turnkey automation across India.',
+    technologies:['B2B','Lead Gen','SEO','Responsive'],
+    demoURL:'https://roboticsstudio.in', imageURL: '/assets/images/work/robotics-studio.webp' },
 
-  { title:'The Family Dental', category:'Web', featured:true,
-    shortDescription:'SEO-optimised dental practice site for Dr. Swapnil Bade with structured-data schemas, ratings, and an image gallery.',
-    technologies:['HTML5','CSS3','SEO','Schema.org'],
-    demoURL:'https://drswapnilbade.com' },
+  { title:'Yugveer Child Clinic', category:'Healthcare', featured:false, location:'Moshi, Pune',
+    shortDescription:'Warm, parent-friendly paediatric clinic website for Dr. Prashant Patil, covering newborn to adolescent care with easy appointment booking.',
+    technologies:['Healthcare','Appointment CTA','SEO','Responsive'],
+    demoURL:'https://drwebsite-pi.vercel.app', imageURL: '/assets/images/work/yugveer-child-clinic.webp' },
 
-  { title:'Robotics Studio', category:'Web', featured:false,
-    shortDescription:'An engaging robotics & STEM education studio website presenting courses, programs, and student projects.',
-    technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://roboticsstudio.in' },
+  { title:'Ashoka Lab', category:'Pathology Lab', featured:false, location:'Pune',
+    shortDescription:'24/7 pathology lab website with popular tests, home sample collection, centres and one-tap call & WhatsApp booking.',
+    technologies:['Local SEO','Test Catalog','WhatsApp','Responsive'],
+    demoURL:'https://www.ashokalab.in', imageURL: '/assets/images/work/ashoka-lab.webp' },
 
-  { title:'Gajanan Laboratory', category:'Web', featured:false,
-    shortDescription:'A pathology laboratory website with a full test catalog and a WhatsApp-based test enquiry flow.',
-    technologies:['HTML5','CSS3','JavaScript','WhatsApp API'],
-    demoURL:'https://gajanan-laboratory-website.vercel.app' },
+  { title:'Shree Pathology Lab', category:'Pathology Lab', featured:false, location:'Pimpri, Pune',
+    shortDescription:'ISO-certified diagnostic lab website with health packages, transparent pricing, timings and home collection booking.',
+    technologies:['Health Packages','Local SEO','Booking','Responsive'],
+    demoURL:'https://shreepathlab.com', imageURL: '/assets/images/work/shree-pathology-lab.webp' },
 
-  { title:'NIDA Pathology Lab', category:'Web', featured:false,
-    shortDescription:'Multi-branch pathology lab website with test catalog, branch cards, working hours, and online enquiry.',
-    technologies:['HTML5','CSS3','JavaScript','SEO'],
-    demoURL:'https://nidapathologylab.in' },
+  { title:'Gajanan Laboratory', category:'Pathology Lab', featured:false, location:'Chikhali, Pimpri-Chinchwad',
+    shortDescription:'Pathology lab website with full test catalogue, packages, updates and a WhatsApp-based test enquiry flow.',
+    technologies:['Test Catalog','WhatsApp','Local SEO','Responsive'],
+    demoURL:'https://gajananlaboratory.com', imageURL: '/assets/images/work/gajanan-laboratory.webp' },
 
-  { title:'Shree Pathology Lab', category:'Web', featured:false,
-    shortDescription:'A pathology lab site featuring health packages, transparent pricing, and easy contact for bookings.',
-    technologies:['HTML5','CSS3','JavaScript','Responsive'],
-    demoURL:'https://shreepathlab.com' },
+  { title:'NIDA Pathology Laboratory', category:'Pathology Lab', featured:false, location:'Pune',
+    shortDescription:'ISO 9001:2015 certified lab website with doorstep sample collection, multi-branch info, test catalogue and online booking.',
+    technologies:['Multi-branch','Booking','SEO','Responsive'],
+    demoURL:'https://nidapathologylab.in', imageURL: '/assets/images/work/nida-pathology-lab.webp' },
 
-  { title:'Ashoka Labs', category:'Web', featured:false,
-    shortDescription:'A diagnostic lab website with an optimised gallery and clear service presentation for patients.',
-    technologies:['HTML5','CSS3','JavaScript','SEO'],
-    demoURL:'https://ashokalab.in' },
+  { title:'Be Well Clinic', category:'Healthcare', featured:false, location:'Pimpri, Pune',
+    shortDescription:'Ayurvedic wellness clinic website presenting Panchakarma therapies and treatments, with appointment booking and reviews.',
+    technologies:['Healthcare','Booking','SEO','Vercel'],
+    demoURL:'https://be-well-clinic.vercel.app', imageURL: '/assets/images/work/be-well-clinic.webp' },
 
-  { title:'Be Well Clinic', category:'Web', featured:false,
-    shortDescription:'A clean, trust-building website for a multi-speciality clinic with services, appointment enquiry, and responsive layouts.',
-    technologies:['HTML5','CSS3','JavaScript','Vercel'],
-    demoURL:'https://be-well-clinic.vercel.app' },
+  { title:'Kardile Buro Healthcare Foundation', category:'Education', featured:false, location:'Ahilyanagar, Maharashtra',
+    shortDescription:'Website for an ISO-certified group of paramedical, nursing and allied health colleges, with live courses, gallery and announcements.',
+    technologies:['Firebase','Dynamic CMS','Admissions','Responsive'],
+    demoURL:'https://ysinstitutes.com', imageURL: '/assets/images/work/kardile-buro.webp' },
 
-  { title:'S4S Coatings', category:'Web', featured:false,
-    shortDescription:'A bold industrial brand site for a coatings manufacturer showcasing products, capabilities, and enquiries.',
-    technologies:['HTML5','CSS3','JavaScript','Vercel'],
-    demoURL:'https://s4s-coatings.vercel.app' },
+  { title:'The Rising Star School', category:'Education', featured:false, location:'Pune',
+    shortDescription:'Vibrant school website with admissions banner, programmes, events, gallery and a complete mobile-responsive overhaul.',
+    technologies:['Admissions','Gallery','Animations','Responsive'],
+    demoURL:'https://the-rising-star-school.vercel.app', imageURL: '/assets/images/work/rising-star-school.webp' },
 
-  { title:'AP Copiers', category:'Web', featured:false,
-    shortDescription:'Business website for a copier & printing solutions company, with a PWA favicon/manifest and branded tab identity.',
-    technologies:['HTML5','CSS3','PWA','SEO'],
-    demoURL:'https://apcopiers.in' },
+  { title:'S4S Coatings', category:'Industrial', featured:false, location:'Pimpri-Chinchwad, Pune',
+    shortDescription:'Bold industrial brand site for an epoxy, PU & ESD floor-coating manufacturer, showcasing products, capabilities and quote requests.',
+    technologies:['B2B','Lead Gen','Gallery','Vercel'],
+    demoURL:'https://s4s-coatings.vercel.app', imageURL: '/assets/images/work/s4s-coatings.webp' },
+
+  { title:'AP Copiers', category:'Business', featured:false, location:'Pimpri, Pune',
+    shortDescription:'Business website for a one-stop xerox, printing & stationery centre, with services, reviews and WhatsApp enquiries.',
+    technologies:['Local SEO','PWA','WhatsApp','Responsive'],
+    demoURL:'https://apcopiers.in', imageURL: '/assets/images/work/ap-copiers.webp' },
 ];
 
 function slugify(s){return String(s).toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/[\s_]+/g,'-').replace(/-+/g,'-');}
@@ -172,7 +177,7 @@ async function runSeed(){
       log('Deleted ' + snap.size + ' existing project(s) (demo + any old data).');
     }
 
-    /* Insert the 12 real projects */
+    /* Insert the real projects */
     log('Publishing ' + REAL_PROJECTS.length + ' real projects…');
     let n = 0;
     for (const p of REAL_PROJECTS) {
@@ -187,7 +192,8 @@ async function runSeed(){
         githubURL: p.githubURL || '',
         featured: !!p.featured,
         technologies: p.technologies,
-        imageURL: '',
+        imageURL: p.imageURL || '',
+        location: p.location || '',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
       n++;

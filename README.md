@@ -8,7 +8,7 @@ Live at **[visionqast.com](https://visionqast.com)**.
 ```
 /                       Site root (pages served from here — URLs depend on this)
 ├── index.html          Home
-├── services.html       Services (loaded from Firestore `services`)
+├── services.html       Services catalogue (static, 15 services with #slug anchors)
 ├── work.html           Portfolio (loaded from Firestore `projects`)
 ├── about.html          About
 ├── blog.html           Blog (Firestore `blogs`)
@@ -31,7 +31,7 @@ Live at **[visionqast.com](https://visionqast.com)**.
 │   │   ├── layout.js            Shared navbar/footer/chrome injected on every page
 │   │   ├── script.js            Public-site loaders (Firestore with static fallbacks)
 │   │   └── admin.js             Admin shared logic (auth guard, CRUD helpers)
-│   ├── images/         logo.png (full logo) · logo-mark.png (orange mark, transparent)
+│   ├── images/         logo.png (full logo) · logo-light.png (footer, dark bg) · logo-mark.png (mark)
 │   └── icons/          favicon PNGs, apple-touch-icon, PWA icons, browserconfig.xml
 │
 ├── firebase.json       Hosting headers/rewrites + Firestore config
@@ -43,7 +43,11 @@ Live at **[visionqast.com](https://visionqast.com)**.
 
 Public pages read Firestore first and fall back to static content in
 `assets/js/script.js` when a collection is empty. Manage real content via `/admin/`:
-`projects`, `services`, `blogs`, `testimonials` (status-gated), `contacts` (leads).
+`projects`, `blogs`, `testimonials` (status-gated), `contacts` (leads).
+
+The service catalogue is static: names/slugs live in `SERVICE_GROUPS` in
+`assets/js/layout.js` (nav mega-menu, footer, contact form) and the detail copy
+in `services.html` + the home page tiles. Keep slugs in sync across the three.
 
 ## Icons
 
