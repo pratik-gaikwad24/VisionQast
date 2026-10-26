@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Our Work — VisionQast Portfolio</title>
+  <title>Portfolio — VisionQast</title>
   <meta name="description" content="Explore VisionQast's portfolio — real client websites, web applications, and custom software for clinics, labs, schools, and businesses across India." />
   <link rel="canonical" href="https://visionqast.com/work.html" />
   <meta name="theme-color" content="#FAF8F6" />
@@ -13,6 +13,7 @@
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap" />
   <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
@@ -27,24 +28,67 @@
     <div class="container">
       <div class="eyebrow" data-reveal>Portfolio</div>
       <h1 class="page-hero-title" data-reveal data-delay="1">Products We're<br><span class="gradient-text">Proud to Have Built</span></h1>
-      <p class="lead" data-reveal data-delay="2">From early-stage MVPs to enterprise platforms — a selection of work that shows what we can do for you.</p>
-      <div class="crumb" data-reveal data-delay="3"><a href="/index.html">Home</a> / <span>Work</span></div>
+      <p class="lead" data-reveal data-delay="2">Websites we've built, brands we market and LinkedIn pages we manage — real clients, real results.</p>
+      <div class="crumb" data-reveal data-delay="3"><a href="/index.html">Home</a> / <span>Portfolio</span></div>
     </div>
   </section>
 
-  <!-- ═══ PORTFOLIO ═══ -->
+  <!-- ═══ PORTFOLIO — BY SERVICE ═══ -->
   <section class="section">
     <div class="container">
-      <div class="filters" data-reveal>
-        <button class="filter active" data-filter="all">All Projects</button>
-        <button class="filter" data-filter="healthcare">🩺 Healthcare</button>
-        <button class="filter" data-filter="pathology lab">🧪 Pathology Labs</button>
-        <button class="filter" data-filter="industrial">🏭 Industrial</button>
-        <button class="filter" data-filter="education">🎓 Education</button>
-        <button class="filter" data-filter="media & creative">🎬 Media &amp; Creative</button>
-        <button class="filter" data-filter="business">💼 Business</button>
+      <div class="ptabs" role="tablist" aria-label="Portfolio by service" data-reveal>
+        <button class="ptab active" role="tab" aria-selected="true" data-ptab="all"><span>✨</span>All Projects</button>
+        <button class="ptab" role="tab" aria-selected="false" data-ptab="website"><span>🌐</span>Websites <i>13</i></button>
+        <button class="ptab" role="tab" aria-selected="false" data-ptab="marketing"><span>📣</span>Digital Marketing <i>7</i></button>
+        <button class="ptab" role="tab" aria-selected="false" data-ptab="linkedin"><span>💼</span>LinkedIn <i>2</i></button>
       </div>
-      <div class="work-grid" id="work-grid"></div>
+
+      <!-- Websites -->
+      <div class="psec" id="websites" data-psec="website">
+        <div class="psec-head">
+          <span class="hs-ic" style="background:linear-gradient(135deg,#F85000,#FF7A2F)">🌐</span>
+          <div><h2>Website Development</h2><p>Live business websites we've designed &amp; built</p></div>
+        </div>
+        <div class="filters">
+          <button class="filter active" data-filter="all">All Websites</button>
+          <button class="filter" data-filter="healthcare">🩺 Healthcare</button>
+          <button class="filter" data-filter="pathology lab">🧪 Pathology Labs</button>
+          <button class="filter" data-filter="industrial">🏭 Industrial</button>
+          <button class="filter" data-filter="education">🎓 Education</button>
+          <button class="filter" data-filter="media & creative">🎬 Media &amp; Creative</button>
+          <button class="filter" data-filter="business">💼 Business</button>
+        </div>
+        <div class="work-grid" id="work-grid"></div>
+      </div>
+
+      <!-- Digital marketing -->
+      <div class="psec" id="digital-marketing" data-psec="marketing">
+        <div class="psec-head">
+          <span class="hs-ic" style="background:linear-gradient(135deg,#EC4899,#F85000)">📣</span>
+          <div><h2>Digital &amp; Social Media Marketing</h2><p>Brands we grow with social media, content &amp; ads</p></div>
+        </div>
+        <div class="pc-grid">
+          <div class="pc-card"><span class="pc-av">S</span><div><b>Speedwaytech</b><small>IT</small></div></div>
+          <div class="pc-card"><span class="pc-av">T</span><div><b>Trimurti Infotech</b><small>IT</small></div></div>
+          <div class="pc-card"><span class="pc-av">H</span><div><b>Herbalife Coach</b><small>Health &amp; Wellness</small></div></div>
+          <div class="pc-card"><span class="pc-av">S</span><div><b>Shruti Wellness Coach</b><small>Health &amp; Wellness</small></div></div>
+          <div class="pc-card"><span class="pc-av">K</span><div><b>Coach Kuldip – UV Fit Parivar</b><small>Health &amp; Wellness</small></div></div>
+          <div class="pc-card"><span class="pc-av">C</span><div><b>Chatak Beauty Parlour</b><small>Beauty</small></div></div>
+          <div class="pc-card"><span class="pc-av">N</span><div><b>New Unique Beauty Salon</b><small>Beauty · Full marketing</small></div></div>
+        </div>
+      </div>
+
+      <!-- LinkedIn -->
+      <div class="psec" id="linkedin" data-psec="linkedin">
+        <div class="psec-head">
+          <span class="hs-ic" style="background:linear-gradient(135deg,#0A66C2,#0EA5E9)">💼</span>
+          <div><h2>LinkedIn Management</h2><p>Company pages &amp; profiles we manage on LinkedIn</p></div>
+        </div>
+        <div class="pc-grid">
+          <div class="pc-card"><span class="pc-av pc-li">A</span><div><b>Anay Properties</b><small>Real Estate</small></div></div>
+          <div class="pc-card"><span class="pc-av pc-li">K</span><div><b>KSH International</b><small>Business</small></div></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -77,10 +121,8 @@
 
 <div id="site-footer"></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="/assets/js/firebase-config.js"></script>
-<script src="/assets/js/layout.js"></script>
-<script src="/assets/js/script.js"></script>
+<script src="/assets/js/firebase-config.js" defer></script>
+<script src="/assets/js/layout.js" defer></script>
+<script src="/assets/js/script.js" defer></script>
 </body>
 </html>

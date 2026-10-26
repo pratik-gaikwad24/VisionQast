@@ -22,6 +22,7 @@
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap" />
   <link rel="stylesheet" href="/assets/css/style.css" />
 
   <script type="application/ld+json">
@@ -66,7 +67,7 @@
           </p>
           <div class="hero-cta" data-reveal data-delay="3">
             <a href="#audit" class="btn btn-primary btn-lg">Get a Free Growth Audit →</a>
-            <a href="/work.html" class="btn btn-ghost btn-lg">See Our Work</a>
+            <a href="/work.html" class="btn btn-ghost btn-lg">See Our Portfolio</a>
           </div>
           <div class="hero-trust" data-reveal data-delay="4">
             <div class="hero-avatars">
@@ -97,14 +98,53 @@
             </div>
             <div class="f-group"><label for="lf-service">What do you need help with?</label><select id="lf-service" name="service" class="f-input" data-service-select></select></div>
             <div class="f-group"><label for="lf-site">Website (if any)</label><input id="lf-site" name="website" class="f-input" placeholder="yourbusiness.com" autocomplete="url" /></div>
-            <button type="submit" class="btn btn-primary btn-lg lead-submit">Send My Free Audit →</button>
-            <p class="lead-note">🔒 Your details stay private. We reply within 24 hours.</p>
+            <button type="submit" class="btn btn-wa btn-lg lead-submit">💬 Get My Free Audit on WhatsApp →</button>
+            <p class="lead-note">🔒 Opens WhatsApp with your details. We reply within 24 hours.</p>
             <div class="lead-success" hidden>
-              <div class="ic">🎉</div>
-              <h3>Request received!</h3>
-              <p>We'll send your audit within 24 hours. Need it sooner? <a href="https://wa.me/917249395515" target="_blank" rel="noopener">WhatsApp us</a>.</p>
+              <div class="ic">💬</div>
+              <h3>Almost done: tap Send in WhatsApp</h3>
+              <p>Your audit request is ready in WhatsApp. Just press <b>Send</b> and we'll reply within 24 hours.</p>
+              <a class="btn btn-wa wa-fallback" href="https://wa.me/917249395515" target="_blank" rel="noopener" style="margin-top:1rem">WhatsApp didn't open? Tap here →</a>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CLIENTS BY SERVICE ═══ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head text-center">
+        <div class="eyebrow" data-reveal>Companies We Work With</div>
+        <h2 class="h-title" data-reveal data-delay="1">Real Brands, <span class="gradient-text">Real Results</span></h2>
+        <p class="lead" data-reveal data-delay="2">Businesses across IT, healthcare, wellness, beauty, real estate and more trust us with their websites and marketing.</p>
+      </div>
+
+      <div class="cw-grid">
+        <div class="cw-card" data-reveal>
+          <div class="cw-head"><span class="hs-ic" style="background:linear-gradient(135deg,#F85000,#FF7A2F)">🌐</span><div><b>Website Development</b><small>13 live client websites</small></div></div>
+          <div class="cw-tags">
+            <span>The Family Dental Clinic</span><span>Ashmak Media</span><span>Robotics Studio Automation</span>
+            <span>Yugveer Child Clinic</span><span>Ashoka Lab</span><span>Shree Pathology Lab</span>
+            <span>Gajanan Laboratory</span><span>NIDA Pathology Laboratory</span><span>Be Well Clinic</span>
+            <span>Kardile Buro Healthcare Foundation</span><span>The Rising Star School</span><span>S4S Coatings</span><span>AP Copiers</span>
+          </div>
+          <a href="/work.html#websites" class="cw-link">See the websites →</a>
+        </div>
+
+        <div class="cw-card" data-reveal data-delay="1">
+          <div class="cw-head"><span class="hs-ic" style="background:linear-gradient(135deg,#EC4899,#F85000)">📣</span><div><b>Digital &amp; Social Media Marketing</b><small>IT, health &amp; beauty brands</small></div></div>
+          <div class="cw-group"><em>IT</em><div class="cw-tags"><span>Speedwaytech</span><span>Trimurti Infotech</span></div></div>
+          <div class="cw-group"><em>Health &amp; Wellness</em><div class="cw-tags"><span>Herbalife Coach</span><span>Shruti Wellness Coach</span><span>Coach Kuldip – UV Fit Parivar</span></div></div>
+          <div class="cw-group"><em>Beauty</em><div class="cw-tags"><span>Chatak Beauty Parlour</span><span>New Unique Beauty Salon</span></div></div>
+          <a href="/services.html#digital-marketing" class="cw-link">Digital marketing →</a>
+        </div>
+
+        <div class="cw-card" data-reveal data-delay="2">
+          <div class="cw-head"><span class="hs-ic" style="background:linear-gradient(135deg,#0A66C2,#0EA5E9)">💼</span><div><b>LinkedIn Management</b><small>Real estate &amp; business</small></div></div>
+          <div class="cw-tags"><span>Anay Properties</span><span>KSH International</span></div>
+          <a href="/services.html#linkedin" class="cw-link">LinkedIn services →</a>
         </div>
       </div>
     </div>
@@ -441,10 +481,8 @@
 
 <div id="site-footer"></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="/assets/js/firebase-config.js"></script>
-<script src="/assets/js/layout.js"></script>
-<script src="/assets/js/script.js"></script>
+<script src="/assets/js/firebase-config.js" defer></script>
+<script src="/assets/js/layout.js" defer></script>
+<script src="/assets/js/script.js" defer></script>
 </body>
 </html>

@@ -13,6 +13,7 @@
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap" />
   <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
@@ -38,7 +39,7 @@
       <div class="contact-grid">
         <!-- Info -->
         <div class="contact-info" data-reveal>
-          <div class="cinfo"><div class="cinfo-ic" style="background:linear-gradient(135deg,#F85000,#FF7A2F)">📞</div><div><div class="lb">Phone</div><a href="tel:+917249395515" class="vl">+91 72493 95515</a><br><a href="tel:+918010720342" class="vl">+91 80107 20342</a></div></div>
+          <div class="cinfo"><div class="cinfo-ic" style="background:linear-gradient(135deg,#F85000,#FF7A2F)">📞</div><div><div class="lb">Phone</div><a href="tel:+917249395515" class="vl">+91 72493 95515</a></div></div>
           <div class="cinfo"><div class="cinfo-ic" style="background:linear-gradient(135deg,#06B6D4,#F85000)">✉️</div><div><div class="lb">Email</div><a href="mailto:visionqast@gmail.com" class="vl">visionqast@gmail.com</a></div></div>
           <div class="cinfo"><div class="cinfo-ic" style="background:linear-gradient(135deg,#C2410C,#F43F5E)">📍</div><div><div class="lb">Location</div><div class="vl">Pune, Maharashtra, India</div></div></div>
           <div class="cinfo"><div class="cinfo-ic" style="background:linear-gradient(135deg,#10B981,#06B6D4)">🕐</div><div><div class="lb">Response Time</div><div class="vl">Within 24 hours</div></div></div>
@@ -74,13 +75,15 @@
               </div>
             </div>
             <div class="f-group"><label for="cf-message">Project Details <span class="req">*</span></label><textarea id="cf-message" class="f-input" placeholder="Tell us about your project — what you want to build, your timeline, and any specific requirements…"></textarea></div>
-            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center">Send Message →</button>
+            <button type="submit" class="btn btn-wa btn-lg" style="width:100%;justify-content:center">💬 Send Message on WhatsApp →</button>
+            <p class="lead-note">Your message opens in WhatsApp, ready to send to +91 72493 95515.</p>
           </form>
 
           <div class="form-success" id="form-success">
-            <div class="ic">🎉</div>
-            <h3>Message Sent!</h3>
-            <p>Thanks for reaching out. We'll review your project and get back to you within 24 hours with a clear roadmap and pricing.</p>
+            <div class="ic">💬</div>
+            <h3>Almost done: tap Send in WhatsApp</h3>
+            <p>Your message is ready in WhatsApp. Just press <b>Send</b> and we'll reply within 24 hours with a clear roadmap and pricing.</p>
+            <a class="btn btn-wa wa-fallback" href="https://wa.me/917249395515" target="_blank" rel="noopener" style="margin-top:1.2rem">WhatsApp didn't open? Tap here →</a>
           </div>
         </div>
       </div>
@@ -90,10 +93,8 @@
 
 <div id="site-footer"></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="/assets/js/firebase-config.js"></script>
-<script src="/assets/js/layout.js"></script>
-<script src="/assets/js/script.js"></script>
+<script src="/assets/js/firebase-config.js" defer></script>
+<script src="/assets/js/layout.js" defer></script>
+<script src="/assets/js/script.js" defer></script>
 </body>
 </html>

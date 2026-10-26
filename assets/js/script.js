@@ -65,7 +65,7 @@ async function loadServices() {
   if (!grid) return;
 
   let items = [];
-  if (typeof db !== 'undefined' && db) {
+  if (await window.dbReady) {
     try {
       let snap;
       try { snap = await db.collection('services').where('status', '==', 'active').orderBy('order').get(); }
@@ -107,8 +107,20 @@ async function loadWork() {
   const grid = document.getElementById('work-grid');
   if (!grid) return;
 
+  const limit = grid.dataset.limit ? parseInt(grid.dataset.limit) : Infinity;
+  const show = items => {
+    items.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+    WORK_ITEMS = items;
+    renderWork(items.slice(0, limit));
+    applyWorkFilter();
+  };
+
+  /* Render the built-in projects immediately — no waiting on Firestore */
+  show([...STATIC_WORK]);
+  wireFilters();
+
   let extra = [];
-  if (typeof db !== 'undefined' && db) {
+  if (await window.dbReady) {
     try {
       const snap = await db.collection('projects').where('status', '==', 'published').get();
       extra = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -118,14 +130,7 @@ async function loadWork() {
   const hosts = new Set(STATIC_WORK.map(p => hostOf(p.demoURL)));
   hosts.add('visionqast.com'); /* our own site is not a client project */
   extra = extra.filter(p => !titles.has(normTitle(p.title)) && !hosts.has(hostOf(p.demoURL)));
-
-  const items = [...STATIC_WORK, ...extra];
-  items.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-  WORK_ITEMS = items;
-
-  const limit = grid.dataset.limit ? parseInt(grid.dataset.limit) : items.length;
-  renderWork(items.slice(0, limit));
-  wireFilters();
+  if (extra.length) show([...STATIC_WORK, ...extra]);
 }
 
 function renderWork(items) {
@@ -155,17 +160,20 @@ function renderWork(items) {
   reveal(grid);
 }
 
+/* Portfolio filters only — service filters carry data-filter-scope */
+const workFilterBtns = () => document.querySelectorAll('.filters:not([data-filter-scope]) .filter');
+function applyWorkFilter() {
+  const f = document.querySelector('.filters:not([data-filter-scope]) .filter.active')?.dataset.filter || 'all';
+  document.querySelectorAll('.work-card').forEach(card => {
+    card.style.display = (f === 'all' || card.dataset.cat === f.toLowerCase()) ? '' : 'none';
+  });
+}
 function wireFilters() {
-  /* Portfolio filters only — service filters carry data-filter-scope */
-  const filters = document.querySelectorAll('.filters:not([data-filter-scope]) .filter');
-  if (!filters.length) return;
+  const filters = workFilterBtns();
   filters.forEach(btn => btn.addEventListener('click', () => {
     filters.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const f = btn.dataset.filter;
-    document.querySelectorAll('.work-card').forEach(card => {
-      card.style.display = (f === 'all' || card.dataset.cat === f.toLowerCase()) ? '' : 'none';
-    });
+    applyWorkFilter();
   }));
 }
 
@@ -245,7 +253,7 @@ async function loadTestimonials() {
   if (!track) return;
 
   let items = [];
-  if (typeof db !== 'undefined' && db) {
+  if (await window.dbReady) {
     try {
       const snap = await db.collection('testimonials').where('status', '==', 'active').get();
       items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -298,7 +306,7 @@ async function loadBlog() {
   if (!grid) return;
 
   let items = [];
-  if (typeof db !== 'undefined' && db) {
+  if (await window.dbReady) {
     try {
       let snap;
       try { snap = await db.collection('blogs').where('status', '==', 'published').orderBy('createdAt', 'desc').get(); }
@@ -335,11 +343,33 @@ const STATIC_BLOG = [
   { title:'Shipping Faster Without Breaking Things', category:'Process', excerpt:'Our CI/CD playbook for zero-downtime deploys and confident, frequent releases.', author:'VisionQast Team', readTime:6, tags:['DevOps','CI/CD'] },
 ];
 
-/* ── Contact form ───────────────────────────────────────────── */
+/* ── Enquiries → WhatsApp (+ saved to Firestore `contacts`) ──── */
+const WHATSAPP_NO = '917249395515';
+
+function whatsappUrl(fields) {
+  const lines = ['*New enquiry from VisionQast website*', ''];
+  fields.forEach(([label, value]) => { if (value) lines.push(`*${label}:* ${value}`); });
+  return `https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent(lines.join('\n'))}`;
+}
+
+/* Must run synchronously inside the submit handler, or popup blockers stop it */
+function openWhatsApp(url) {
+  const w = window.open(url, '_blank');
+  if (w) w.opener = null; else window.location.href = url;
+}
+
+/* Background save so leads still appear in /admin/ — never blocks the user */
+function saveLead(data) {
+  window.dbReady
+    .then(d => d && d.collection('contacts').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() }))
+    .catch(() => {});
+}
+
+/* ── Contact page form ──────────────────────────────────────── */
 function initContact() {
   const form = document.getElementById('contact-form');
   if (!form) return;
-  form.addEventListener('submit', async e => {
+  form.addEventListener('submit', e => {
     e.preventDefault();
     const g = id => form.querySelector('#' + id);
     const name = g('cf-name').value.trim();
@@ -353,29 +383,26 @@ function initContact() {
     if (!message) { g('cf-message').classList.add('err'); ok = false; }
     if (!ok) return;
 
-    const btn = form.querySelector('[type="submit"]');
-    const txt = btn.textContent;
-    btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Sending…';
-
     const data = {
-      name, email, message,
+      name, email, message: message.slice(0, 5000),
       phone:   g('cf-phone')?.value.trim() || '',
       company: g('cf-company')?.value.trim() || '',
       service: g('cf-service')?.value || '',
       budget:  g('cf-budget')?.value || '',
       status: 'new',
     };
+    const url = whatsappUrl([
+      ['Name', data.name], ['Email', data.email], ['Phone', data.phone], ['Company', data.company],
+      ['Service', data.service], ['Budget', data.budget], ['Project details', data.message],
+    ]);
+    openWhatsApp(url);
+    saveLead(data);
 
-    try {
-      if (typeof db !== 'undefined' && db) {
-        await db.collection('contacts').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      } else { await new Promise(r => setTimeout(r, 900)); }
-      form.style.display = 'none';
-      const successEl = document.getElementById('form-success');
-      if (successEl) successEl.style.display = 'block';
-    } catch (err) {
-      btn.disabled = false; btn.textContent = txt;
-      alert('Something went wrong. Please email us directly at visionqast@gmail.com');
+    form.style.display = 'none';
+    const successEl = document.getElementById('form-success');
+    if (successEl) {
+      successEl.querySelector('.wa-fallback')?.setAttribute('href', url);
+      successEl.style.display = 'block';
     }
   });
 }
@@ -414,10 +441,10 @@ function initServiceTabs() {
   }));
 }
 
-/* ── Short lead forms (home hero audit) → Firestore `contacts` ─ */
+/* ── Short lead forms (home hero audit) → WhatsApp + Firestore ─ */
 function initLeadForms() {
   document.querySelectorAll('form.lead-form').forEach(form => {
-    form.addEventListener('submit', async e => {
+    form.addEventListener('submit', e => {
       e.preventDefault();
       const f = n => form.elements[n];
       const name = f('name').value.trim();
@@ -429,28 +456,44 @@ function initLeadForms() {
       if (!ok) return;
 
       const site = f('website')?.value.trim();
+      const source = form.dataset.source || 'Website lead';
       const data = {
         name, email,
         phone: f('phone')?.value.trim() || '',
         service: f('service')?.value || '',
-        message: `${form.dataset.source || 'Website lead'}${site ? ` · Website: ${site}` : ''}`,
+        message: `${source}${site ? ` · Website: ${site}` : ''}`,
         status: 'new',
       };
-      const btn = form.querySelector('[type="submit"]');
-      const txt = btn.textContent;
-      btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Sending…';
-      try {
-        if (typeof db !== 'undefined' && db) {
-          await db.collection('contacts').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        } else { await new Promise(r => setTimeout(r, 900)); }
-        [...form.children].forEach(el => { if (!el.classList.contains('lead-success')) el.hidden = true; });
-        form.querySelector('.lead-success').hidden = false;
-      } catch (err) {
-        btn.disabled = false; btn.textContent = txt;
-        alert('Something went wrong. Please WhatsApp us at +91 72493 95515 or email visionqast@gmail.com');
-      }
+      const url = whatsappUrl([
+        ['Request', source], ['Name', data.name], ['Email', data.email], ['Phone', data.phone],
+        ['Service', data.service], ['Website', site],
+      ]);
+      openWhatsApp(url);
+      saveLead(data);
+
+      [...form.children].forEach(el => { if (!el.classList.contains('lead-success')) el.hidden = true; });
+      const done = form.querySelector('.lead-success');
+      done.querySelector('.wa-fallback')?.setAttribute('href', url);
+      done.hidden = false;
     });
   });
+}
+
+/* ── Portfolio: service tabs (Websites / Marketing / LinkedIn) ─ */
+function initPortfolioTabs() {
+  const bar = document.querySelector('.ptabs');
+  if (!bar) return;
+  const tabs = bar.querySelectorAll('.ptab');
+  const secs = document.querySelectorAll('.psec');
+  const apply = t => {
+    tabs.forEach(b => { const on = b.dataset.ptab === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
+    secs.forEach(s => { s.hidden = t !== 'all' && s.dataset.psec !== t; });
+    bar.dataset.mode = t === 'all' ? 'all' : 'one';
+  };
+  tabs.forEach(b => b.addEventListener('click', () => apply(b.dataset.ptab)));
+  /* #websites / #digital-marketing / #linkedin open that tab directly */
+  const fromHash = { '#websites': 'website', '#digital-marketing': 'marketing', '#linkedin': 'linkedin' }[location.hash];
+  if (fromHash) apply(fromHash);
 }
 
 /* ── Home: ad-budget ROI calculator ─────────────────────────── */
@@ -480,6 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLeadForms();
   initCalc();
   initServiceFilters();
+  initPortfolioTabs();
   loadServices();
   loadWork();
   loadTestimonials();

@@ -6,7 +6,7 @@
 const NAV_ITEMS = [
   { label: 'Home',     href: '/index.html',    match: ['/', '/index.html'] },
   { label: 'Services', href: '/services.html', match: ['/services.html'] },
-  { label: 'Work',     href: '/work.html',     match: ['/work.html'] },
+  { label: 'Portfolio', href: '/work.html',     match: ['/work.html'] },
   { label: 'About',    href: '/about.html',    match: ['/about.html'] },
   { label: 'Blog',     href: '/blog.html',     match: ['/blog.html'] },
   { label: 'Contact',  href: '/contact.html',  match: ['/contact.html'] },
@@ -128,7 +128,7 @@ function buildFooter() {
         <div class="footer-col">
           <h5>Company</h5>
           <a href="/about.html">About Us</a>
-          <a href="/work.html">Our Work</a>
+          <a href="/work.html">Portfolio</a>
           <a href="/services.html">Services</a>
           <a href="/blog.html">Blog</a>
           <a href="/contact.html">Contact</a>
@@ -166,11 +166,9 @@ function buildFooter() {
   </footer>`;
 }
 
-/* ── Chrome (loader, cursor, back-to-top) ───────────────────── */
+/* ── Chrome (back-to-top, WhatsApp/call) ─────────────────────────────── */
 function buildChrome() {
   return `
-  <div id="loader"><img class="loader-logo" src="/assets/images/logo.png" alt="VisionQast" width="220" height="60" /><div class="loader-bar"><div class="loader-fill"></div></div></div>
-  <div id="cursor" aria-hidden="true"></div>
   <button id="totop" aria-label="Back to top">↑</button>
   <div class="float-cta">
     <a href="https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent('Hi VisionQast, I would like to discuss a project.')}" target="_blank" rel="noopener" class="fc-wa" aria-label="Chat on WhatsApp">
@@ -184,7 +182,7 @@ function buildChrome() {
 
 /* ── Mount ──────────────────────────────────────────────────── */
 (function mountLayout() {
-  /* Chrome first (loader needs to paint immediately) */
+  /* Chrome first */
   document.body.insertAdjacentHTML('afterbegin', buildChrome());
 
   const navMount = document.getElementById('site-nav');
@@ -210,11 +208,6 @@ function fillServiceSelect() {
 }
 
 function wireLayout() {
-  /* Loader — hide on load, but also a hard cap so a slow/blocked CDN
-     resource can never trap the page behind the full-screen overlay. */
-  const hideLoader = () => document.getElementById('loader')?.classList.add('hidden');
-  window.addEventListener('load', () => setTimeout(hideLoader, 1100));
-  setTimeout(hideLoader, 2800);
 
   /* Navbar scroll */
   const nav = document.getElementById('nav');
@@ -235,27 +228,14 @@ function wireLayout() {
   document.getElementById('mClose')?.addEventListener('click', () => { menu.classList.remove('open'); document.body.style.overflow = ''; });
   menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { menu.classList.remove('open'); document.body.style.overflow = ''; }));
 
-  /* Cursor (desktop) */
-  if (window.matchMedia('(pointer:fine)').matches) {
-    const c = document.getElementById('cursor');
-    window.addEventListener('mousemove', e => { c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px'; });
-    document.querySelectorAll('a,button').forEach(el => {
-      el.addEventListener('mouseenter', () => c.style.transform = 'translate(-50%,-50%) scale(2.2)');
-      el.addEventListener('mouseleave', () => c.style.transform = 'translate(-50%,-50%) scale(1)');
-    });
-  } else {
-    document.getElementById('cursor')?.remove();
-  }
-
   /* Newsletter */
   document.getElementById('newsletter-form')?.addEventListener('submit', e => {
     e.preventDefault();
     const inp = e.target.querySelector('input');
     const btn = e.target.querySelector('button');
     if (!inp.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value)) return;
-    if (typeof db !== 'undefined' && db) {
-      db.collection('newsletter').add({ email: inp.value.trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {});
-    }
+    const email = inp.value.trim();
+    window.dbReady?.then(d => d && d.collection('newsletter').add({ email, createdAt: firebase.firestore.FieldValue.serverTimestamp() })).catch(() => {});
     btn.textContent = '✓ Subscribed!';
     inp.value = '';
     setTimeout(() => btn.textContent = 'Subscribe →', 3000);
