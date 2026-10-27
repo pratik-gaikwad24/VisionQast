@@ -228,18 +228,24 @@ function wireLayout() {
   document.getElementById('mClose')?.addEventListener('click', () => { menu.classList.remove('open'); document.body.style.overflow = ''; });
   menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { menu.classList.remove('open'); document.body.style.overflow = ''; }));
 
-  /* Newsletter */
-  document.getElementById('newsletter-form')?.addEventListener('submit', e => {
+  /* Newsletter (footer + blog) → WhatsApp + Firestore `newsletter` */
+  document.querySelectorAll('#newsletter-form, #newsletter-cta').forEach(form => form.addEventListener('submit', e => {
     e.preventDefault();
-    const inp = e.target.querySelector('input');
-    const btn = e.target.querySelector('button');
-    if (!inp.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value)) return;
+    const inp = form.querySelector('input');
+    const btn = form.querySelector('button');
     const email = inp.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { inp.focus(); return; }
+    /* Opened synchronously inside the submit handler, or popup blockers stop it */
+    const text = `*New newsletter subscriber from VisionQast website*\n\n*Email:* ${email}\n*Page:* ${location.pathname}`;
+    const url = `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}`;
+    const w = window.open(url, '_blank');
+    if (w) w.opener = null; else window.location.href = url;
     window.dbReady?.then(d => d && d.collection('newsletter').add({ email, createdAt: firebase.firestore.FieldValue.serverTimestamp() })).catch(() => {});
+    const label = btn.textContent;
     btn.textContent = '✓ Subscribed!';
     inp.value = '';
-    setTimeout(() => btn.textContent = 'Subscribe →', 3000);
-  });
+    setTimeout(() => btn.textContent = label, 3000);
+  }));
 
   /* Scroll reveal */
   const obs = new IntersectionObserver(entries => {
